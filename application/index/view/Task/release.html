@@ -1,0 +1,353 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<!-- <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" /> -->
+    <!-- // <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script> -->
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="" placeholder="任务名称" id="adminName" name="name">
+		</div>
+	</div>
+	{if condition="input('get.novice') eq 2"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务单价：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off" value="" placeholder="任务单价" name="price">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务总量：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off"  placeholder="任务总量：" id="password2" name="number">
+		</div>
+	</div>
+	
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务回执选项：</label>
+		<div class="formControls col-xs-8 col-sm-9 " >	
+					<p style='float:left;margin-right:10px;' class="hide"><input type="checkbox" name="result_type[]" value="1"  checked="checked" />截图</p>
+					<p style='float:left;margin-right:10px;' class="hide"><input type="checkbox" name="result_type[]" value="2"  />链接</p>
+					<p style='float:left;margin-right:10px;' class="hide"><input type="checkbox" name="result_type[]" value="3"  />文字</p>
+			</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务在线时间：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<!-- <input class="datainp wicon laydate-icon input-text"  id="date01" type="text"   placeholder="选填" value=""  name="active_time" readonly>   -->
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="time_active"  onchange="shows(this)" >
+				<option value="">--请选择时间单位--</option>
+				<option value="i"> 分钟</option>
+				<option value="h">小时</option>
+				<option value="d"> 天</option>				
+			</select>
+			</span>
+
+			<span class="times" style="width:150px;display:none;" >
+				<input type="number" name="active_time" class="input-text num" value="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" />
+			</span>
+			<span>非必填选项：设置在线时间,在线时间已到,不论任务量是否剩余,任务下线(已当前时间为基准)</span>
+		</div>
+		
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务执行时间：</label>
+		<div class="formControls col-xs-8 col-sm-9"> 
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="time"  onchange="show(this)" >
+				<option value="">--请选择时间单位--</option>
+				<option value="i"> 分钟</option>
+				<option value="h">小时</option>
+				<option value="d"> 天</option>				
+			</select>
+			</span>
+
+			<span class="time" style="width:150px;display:none;" >
+				<input type="number" name="execute_time" class="input-text num" value="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" />
+			</span>
+		</div>
+	</div>
+	{/if}
+	
+	
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务类型：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select id='sel1' class="select" name="type"  onchange="types(this)">
+				{volist name='type' id='vo'}
+				<option value="{$vo.id}" pid="{$vo.pid}">{$vo.name}</option>
+				{/volist}		
+			</select>
+			</span>
+			</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务类别：</label>
+		<div class="formControls col-xs-8 col-sm-9 " >
+					{volist name="category" id="vo"}				
+					<p style='float:left;margin-right:10px;' class="hide"><input type="checkbox" value="{$vo.id}" name="category[]" {if condition="$vo.checked eq 1"}checked="checked"{/if}>{$vo.name}</p>
+					{/volist}
+			</div>
+	</div>
+
+	{if condition="input('get.novice') eq 2"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务等级：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="nature" size="1">
+				{volist name="nature" id="vo" key='k'}
+				{if condition="$vo.id neq 1"}
+				<option value="{$vo.id}">{$vo.name}</option>
+				{/if}
+				{/volist}			
+			</select>
+			</span> </div>
+	</div>
+	
+		{if condition="$list.type ==1"}
+		<input type="hidden" name='uid' value="{$list.group}">
+		{else /}
+		<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务负责小组长：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="uid" size="1">
+				<option value="">---请选择---</option>
+				<option value="0">所有小组</option>
+				{volist name="list.group" id="vo" key='k'}
+				<option value="{$vo.uid}">{$vo.admins.username}</option>
+				{/volist}			
+			</select>
+			</span> </div>
+		</div>
+		
+		{/if}
+		
+	
+	{/if}
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">是否推荐：</label>
+		<div class="formControls col-xs-8 col-sm-9"> 
+			<input type="radio"  value="1" name="recommend"  ><span>推荐</span>&nbsp;&nbsp;&nbsp;
+			<input type="radio" value="0"  name="recommend" checked><span>不推荐</span>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务链接：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off"  placeholder="请填写链接" id="password2" name="task_link">
+		</div>
+	</div>
+
+	<div class="foreach">
+	<div class="row cl content1" data='1'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第1步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;" class="editor"  name="editorContact1" ></textarea>
+		</div>
+	</div>
+
+	</div>
+	<div class="row cl content2" style="display:none" data='2'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第2步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;"class="editor"  name="editorContact2"></textarea>
+		</div>
+	</div>
+	<div class="row cl content3"  style="display:none" data='3'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第3步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;"class="editor"  name="editorContact3"></textarea>
+		</div>
+	</div>
+
+	<div class="row cl" style="margin-left:50%;" onclick="change(this)" data='1'>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<div >添加内容</div>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">备注：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea name="remarks" cols="" rows="" class="textarea"  placeholder="说点什么...100个字符以内" dragonfly="true" onKeyUp="textarealength(this,100)"></textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+		</div>
+	</div>
+	<input type="hidden" name='novice' value="{:input('get.novice')}">
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)" ok="1">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+    $(function(){
+        var box = document.getElementsByClassName("editor");
+        for (i=0;i<($('.editor').length);i++){
+            $('.editor').eq(i).attr('name');
+            $('.editor').eq(i).attr('id', $('.editor').eq(i).attr('name'));
+           new UE.ui.Editor({} ).render($('.editor').eq(i).attr('name') );
+
+        }
+
+        $('#date01').val('');
+        types();
+
+    });
+
+	function show(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.time').hide();
+			$('.time').children().val('');
+		}else{
+			$('.time').show();
+		}
+	}
+
+	function shows(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.times').hide();
+			$('.times').children().val('');
+		}else{
+			$('.times').show();
+		}
+	}
+
+	$('.num').blur(function(){
+		var inpVal =$(this).val();
+		if(inpVal<=0 ){
+			$(this).val('');
+		}
+	})
+
+
+
+
+       window.onload = function() {
+       window.UEDITOR_CONFIG.initialFrameWidth = 750; //初始化编辑器宽度
+       window.UEDITOR_CONFIG.initialFrameHeight = 200;  //初始化编辑器高度
+       //自定义请求地址
+       UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+       UE.Editor.prototype.getActionUrl = function(action) {
+
+           if (action == 'uploadimage') {    //上传图片
+
+               return "/index/task/uploadss?action=uploadimage";
+
+           } else  if(action == 'config') {    //加载配置
+
+               return this._bkGetActionUrl.call(this, action);
+           }
+       }
+       //自定义请求地址结束
+       UE.getEditor('content');
+   }
+
+   //添加步数
+   function change(e){
+   		var leng=$(e).attr('data');
+   		if(leng== 3){
+   			alert('最多加三步');
+   		}else{
+   			var num=parseInt($(e).attr('data'))+1;
+   			$('.content'+num).show();
+   			$(e).attr('data',num);
+   		}
+   }
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+    //父级页面
+    modal_alert(date.msg,2000);
+    window.location.href='/index/task/lists'; 
+   }else{
+	 $('.radius').attr('ok',1);
+	 $('.radius').html("&nbsp;&nbsp;提交&nbsp;&nbsp;");
+     alert(date.msg);
+   }
+
+  }
+  
+  function test(o) {
+	
+	var ok=$(o).attr("ok");
+	if(ok==1){
+		
+		$(o).attr("ok",0);
+		$(o).html("发布中请稍等~~~");
+		var url='/index/task/release';
+		ajax_form(ids,url,result);
+	}
+	
+  }
+
+  //获取类别
+  function types(e){
+  	$('.hide').children().attr('checked',false);
+  	var pid=$('#sel1 option:selected').attr('pid');
+  	if(pid != ''){
+  		var obj=$('.hide');
+  		obj.each(function(){
+  			var va=$(this).children().val();
+  			if(pid.indexOf(va) !=-1){
+  				$(this).show();
+  			}else{
+  				$(this).hide();
+  			}
+  		})
+  	}
+  }
+
+  // 获取类型
+  // function types(e){
+  // 	modal_alert('请稍等',1000);
+  //   document.getElementById("sel2").options.length=0;
+  // 	if($(e).val() != ''){
+  // 		var pid=$('#sel1 option:selected').attr('pid');
+  // 		var url='/index/task/get_categroy';
+  // 		var data={pid:pid};
+  // 		var render=function(date){
+  // 			if(date.state=='y'){
+  // 				add_option(date.msg);
+  // 			}else{
+  // 				alert(date.msg);
+  // 			}
+  // 		}
+  // 		ajax_data(data,url,render);
+  // 	}else{
+  // 		document.getElementById("sel2").options.add(new Option("--请选择--",""));
+  // 	}
+  // }
+  
+  // //添加option
+  // function add_option(e){
+  // 		document.getElementById("sel2").options.add(new Option("--请选择--",""));
+  // 		for (var i = 0; i <e.length; i++) {
+  // 			document.getElementById("sel2").options.add(new Option(e[i].name,e[i].id));
+  // 		};
+  // }
+	
+
+</script> 
+
+{/block}

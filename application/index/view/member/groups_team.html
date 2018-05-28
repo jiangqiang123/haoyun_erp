@@ -1,0 +1,146 @@
+{extend name="base/base"}
+{block name="body"}
+<!-- <style> -->
+	<!-- li{ -->
+				<!-- float:left; -->
+				<!-- list-style-type:none; -->
+				<!-- width:10px; -->
+				<!-- margin:1px; -->
+		 <!-- } -->
+	<!-- .active{ -->
+		<!-- color:#3399FF; -->
+	<!-- } -->
+
+<!-- </style> -->
+
+<style>
+	.pagination{
+		padding-top:10px
+	}
+    li{
+		float:left;
+		list-style-type:none;
+		width:10px;
+		margin:1px;
+		background: #fff;
+		display: inherit;
+		width: 25px;
+		border: 1px solid #2d8cf0;
+		border-radius: 2px;
+		text-align: center;
+		color:#000
+	}
+	.disabled{
+			color:#000
+		}
+    .active{
+        color:#fff;
+		background: #2d8cf0;
+    }
+</style>
+
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 会员管理 <span class="c-gray en">&gt;</span> 小组长列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+<div class="page-container">
+    <form action="" method="post">
+    <div class="text-c">
+        <!-- 账号类型: -->
+        <!-- <span class="select-box inline"> -->
+        <!-- <select name="account_type" class="select" style="font-size: 12px;"> -->
+            <!-- <option value="">全部分类</option> -->
+            <!-- <option value="1" {if condition="$map.account_type eq 1"}selected{/if}>普通</option> -->
+            <!-- <option value="2" {if condition="$map.account_type eq 2"}selected{/if}>小V</option> -->
+        <!-- </select></span>&nbsp;&nbsp; -->
+       <!-- <input type="text" class="input-text" style="width:250px" placeholder="输入手机号码" id="search" name="search" value="{$map.search?$map.search:''}">
+		<input type="text" class="input-text" style="width:250px" placeholder="输入正式姓名" id="names" name="names" value="{$map.names?$map.names:''}">
+        <div  class="btn btn-success radius" id="" name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i> 搜用户</div>-->
+		<!-- <div onclick="search()">搜用户<div> -->
+    </div>
+    </form>
+    <!-- <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"></span></div> -->
+    <div class="mt-20">
+		<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="admin_add('添加所管小组','{:url("member/team_add")}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加所管小组</a></span></div>
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <th width="">ID</th>
+                <th width="">所属小组长</th>
+                <th width="">小组组名</th>
+				<!-- <th>小V数量</th> -->
+				<th width="">添加时间</th>
+                <!-- <th width="">最后登录时间</th> -->
+
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo.id}</td>
+				<td>{$vo.username}</td>
+                <td>{$vo.name}</td>
+                <!-- <td>{$vo.num}</td> -->
+				<td>{$vo.addtime|date="Y-m-d H:i:s",###}</td>
+				<!-- <td >{$vo.last_time|date="Y-m-d H:i:s",###}</td> -->
+              
+                <td>/</td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        {$page}
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+	page();
+	function page(){
+		$(".disabled li:last-child").addClass("liclass");
+	}
+	
+    <!-- $(function(){ -->
+        <!-- $('.table-sort').dataTable({ -->
+            <!-- "aaSorting": [[ 1, "desc" ]],//默认第几个排序 -->
+            <!-- "bStateSave": true,//状态保存 -->
+            <!-- "aoColumnDefs": [ -->
+                <!-- //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示 -->
+                <!-- {"orderable":false,"aTargets":[0,8,9]}// 制定列不参与排序 -->
+            <!-- ] -->
+        <!-- }); -->
+        <!-- $('.table-sort tbody').on( 'click', 'tr', function () { -->
+            <!-- if ( $(this).hasClass('selected') ) { -->
+                <!-- $(this).removeClass('selected'); -->
+            <!-- } -->
+            <!-- else { -->
+                <!-- table.$('tr.selected').removeClass('selected'); -->
+                <!-- $(this).addClass('selected'); -->
+            <!-- } -->
+        <!-- }); -->
+    <!-- }); -->
+	
+	
+	function admin_add(title,url,w,h){
+		layer_show(title,url,w,h);
+	}
+	
+	
+    /*查看认证信息*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*用户-搜索*/
+    function search() {
+		
+        var search = $('#search').val();
+		var names=$('#names').val();
+		<!-- alert(names); -->
+        window.location= "/index/member/member_list?search="+search+"&names="+names;
+    }
+
+
+</script>
+{/block}

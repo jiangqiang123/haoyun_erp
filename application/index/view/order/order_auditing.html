@@ -1,0 +1,174 @@
+{extend name="base/base"}
+{block name="body"}
+<style>
+	.center p img{
+		width:90%;
+	}
+</style>
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.details.name}" placeholder="任务名称" id="adminName" disabled>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务状态：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{if condition="$list.status eq 1"}
+			<input type="text" class="input-text" value="任务中" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 2"/}
+			<input type="text" class="input-text" value="执行完成" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 3"/}
+			<input type="text" class="input-text" value="流单" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 4"/}
+			<input type="text" class="input-text" value="任务失败" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 5"/}
+			<input type="text" class="input-text" value="任务成功" placeholder="任务名称" id="adminName"  disabled>
+			{/if}
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务执行截止时间：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.end|date='Y-m-d H:i:s',###}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务平台：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.type}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+
+	{volist name='list.details.content' id='vo' key="k"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务内容第{$k}步：</label>
+		<div class="formControls col-xs-8 col-sm-9 center">
+			
+			{$vo}
+			
+		</div>
+	</div>
+	{/volist}
+	<br>
+
+	{volist name="sub" id="vo"  key="k"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>执行账号{$k}：</label>
+		{$vo.account}
+		<div class="formControls col-xs-8 col-sm-9 center">
+			{volist name="vo.result_pic" id="pic" }
+				<img src="{$pic}" alt="" style="width:50%;">
+			{/volist}
+		</div>	
+	</div>
+	
+	{if condition="$vo.result_url neq ''"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>回执链接：</label>
+		<div class="formControls col-xs-8 col-sm-9 center">
+				<a href="{$vo.result_url}" target="_blank"> {$vo.result_url}</a>	
+		</div>	
+	</div>
+	{/if}
+	
+	{if condition="$vo.result_writ neq ''"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>回执文字：</label>
+		<div class="formControls col-xs-8 col-sm-9 center">
+				{$vo.result_writ}	
+		</div>	
+	</div>
+	{/if}
+	
+	<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>认证状态：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="radio" name="check{$k}" value="5" onclick="check(this)" data-id="{$vo.id}" checked="checked">认证通过&nbsp;
+                <input type="radio"  name="check{$k}" value="4" onchange="ischecked(this)" data-id="{$vo.id}" >认证失败
+            </div>
+        </div>
+
+
+        <div class="row cl lose lose{$vo.id}" style="display: none">
+            <label class="form-label col-xs-4 col-sm-3">失败原因：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="lose{$vo.id}" cols="" rows="" class="textarea{$vo.id}"  placeholder="填写审核原因..." onKeyUp="textarealength(this,100)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+        	</div>
+        </div>
+        <br>
+        <input type="checkbox" value="{$vo.id}" name="sub_id[]" class="check{$vo.id}" style="display: none" >
+    {/volist}
+
+	
+	{if condition="$list.status eq 2"}
+        <input type="hidden" name="id" value="{$list.id}">
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<btn class="btn btn-primary radius" value="" onclick="test(this)" one="0">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+			</div>
+		</div>
+
+	{/if}
+	
+
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+
+	function check(o){
+    	$('.lose'+$(o).attr('data-id')).css('display','none');
+    	$('.textarea'+$(o).attr('data-id')).val('');
+    	$('.check'+$(o).attr('data-id')).prop("checked",false);
+
+    }
+
+
+    function ischecked(o){
+    	$('.lose'+$(o).attr('data-id')).css('display','block');
+    	$('.check'+$(o).attr('data-id')).prop("checked",true);
+    }
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+	$('.radius').attr('one',0);
+	$('.radius').html("提交");
+   if(date.state=="y"){
+    //父级页面
+     $(window.parent.location.reload());
+   }else{
+     alert(date.msg);
+   }
+
+  }
+  function test(o) {
+	var one=$(o).attr('one');
+	if(one==0){
+		$(o).attr('one',1);
+		$(o).html("提交中，请稍等~");
+		var url='/index/order/order_auditing';
+		ajax_form(ids,url,result);
+	}
+  }
+	
+
+</script> 
+
+{/block}

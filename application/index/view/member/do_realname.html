@@ -1,0 +1,80 @@
+{extend name="base/base"}
+{block name="body"}
+
+<article class="page-container">
+    <form action="" method="post" class="form form-horizontal" id="form-do-realname">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>真实姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.realname}" placeholder="" id="realname" name="realname" disabled >
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>身份证号：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.cardnum}" placeholder="" id="cardnum" name="cardnum" disabled >
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手持照片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <img src="{$info.cardimg}" alt="" style="width: 200px;height: 200px;">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>认证状态：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="radio" id="auth-1" name="status" value="2" onclick="check(this)">认证通过&nbsp;
+                <input type="radio" id="auth-2" name="status" value="3" onchange="ischecked(this)">认证失败
+            </div>
+        </div>
+
+
+        <div class="row cl lose" style="display: none">
+            <label class="form-label col-xs-4 col-sm-3">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="lose" cols="" rows="" class="textarea"  placeholder="填写审核原因..." onKeyUp="textarealength(this,100)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input type="hidden" name="id" value="{$info.id}">
+                <btn class="btn btn-primary radius"  onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript">
+
+    function ischecked(o){
+        $('.lose').css('display','block');
+    }
+    function check(o) {
+        $('.lose').css('display','none');
+        $('.lose').val('');
+    }
+
+    var ids="form-do-realname";
+    var result=function(date){
+       if(date.state=="y"){
+            //父级页面刷新
+            modal_alert(date.msg);
+            $(window.parent.location.reload());
+       }else{
+            modal_alert(date.msg);
+       }
+    }
+    
+    function test(o) {
+        url='/index/member/do_realname';
+        ajax_form(ids,url,result);
+    }
+    
+</script>
+{/block}

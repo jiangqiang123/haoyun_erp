@@ -1,0 +1,116 @@
+{extend name="base/base"}
+{block name="body"}
+<div class="Huialert Huialert-error" style="display:none"></div>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-edit" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限英文名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$rule.name}" placeholder="" id="adminName" name="name">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限中文名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$rule.title}" placeholder="" id="adminNames" name="title">
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>状态：</label>
+		<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+			<div class="radio-box">
+				<input name="hide" type="radio" id="sex-1" value='1' {if condition="$rule.hide eq 1 "}checked{/if}>
+				<label for="sex-1">显示</label>
+			</div>
+			<div class="radio-box">
+				<input type="radio" id="sex-2" name="hide" value='0' {if condition="$rule.hide eq 0 "}checked{/if}>
+				<label for="sex-2">隐藏</label>
+			</div>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">所属类型：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select selectlev" name="pid" size="1">
+				<option value="0">顶级菜单</option>
+				{volist name="fath" id="vo"}
+					<option value="{$vo.id}" {if condition="$rule.pid eq $vo.id "}selected{/if}>&nbsp;&nbsp;&nbsp;|{$vo.title}</option>
+				{/volist}
+			</select>
+			</span> </div>
+	</div>
+
+	<div class="row cl icons">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>图标：</label>
+		<div class="formControls col-xs-1 col-sm-1">
+			<input type="text" class="input-text" value="{$rule.icon}" placeholder="" id="adminNames" name="icon">
+		</div>
+	</div>
+	<!-- <div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>排序：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off" value="" placeholder="int类型"  name="sort">
+		</div>
+	</div> -->
+	<!-- <div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">备注：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea name="remark" cols="" rows="" class="textarea"  placeholder="说点什么...100个字符以内" dragonfly="true" onKeyUp="textarealength(this,100)"></textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+		</div>
+	</div> -->
+	<input type="hidden" name="id" value="{$rule.id}">
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" type="submit" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	// $('.selectpid').click(function(){
+	// 	var level=$(".selectlev").find("option:selected").val();
+	// 	if(level == '1'){
+	// 		//项目
+	// 		$('.level0').removeAttr('disabled');
+	// 		$('.level1').attr('disabled','disabled');
+	// 		$('.level2').attr('disabled','disabled');
+	// 	}else if(level =='2'){
+	// 		//控制器
+	// 		$('.level0').attr('disabled','disabled');
+	// 		$('.level1').removeAttr('disabled');
+	// 		$('.level2').attr('disabled','disabled');
+	// 	}else{
+	// 		//操作
+	// 		$('.level0').attr('disabled','disabled');
+	// 		$('.level1').attr('disabled','disabled');
+	// 		$('.level2').removeAttr('disabled');
+	// 	}
+		
+	// })
+	
+	var ids="form-admin-edit";
+
+	var result=function(date){
+	   if(date.state=="y"){
+			//父级页面刷新
+			modal_alert(date.msg,2000);
+			//$(window.parent.location.reload());
+	   }else{
+			modal_alert(date.msg);
+	   }
+	}
+	function test(o) {
+		var url='/index/admin/rule_edit';
+		ajax_form(ids,url,result);
+	}
+	
+
+</script> 
+
+{/block}

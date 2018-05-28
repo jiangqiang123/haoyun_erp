@@ -1,0 +1,59 @@
+{extend name="base/base"}
+{block name="body"}
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-edit" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>小组名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="" placeholder="" id="adminName" name="name">
+		</div>
+	</div>
+	
+	{if condition="$list.type == 1"}
+		<input type="hidden" name="group" value="{$list.group}">
+	{else /}
+		<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所属组长</label>
+		<div class="formControls col-xs-4 col-sm-3">
+			<select name="group" class="input-text" >
+				<option value="">---请选择---</option>
+				{volist name="list.group" id="vo"}
+				<option value="{$vo.uid}">{$vo.admins.username}</option>
+				{/volist}
+			</select>
+		</div>
+	</div>
+	{/if}
+	
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" type="submit" value="" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+
+
+  var ids="form-admin-edit";
+
+  var result=function(date){
+   if(date.state=="y"){
+    //父级页面
+     $(window.parent.location.reload());
+   }else{
+     modal_alert(date.msg,2000);
+   }
+
+  }
+  function test(o) {
+  	var url='/index/member/team_add';
+   	ajax_form(ids,url,result);
+  }
+	
+
+</script> 
+
+{/block}

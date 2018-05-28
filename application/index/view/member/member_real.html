@@ -1,0 +1,44 @@
+{extend name="base/base"}
+{block name="body"}
+<article class="page-container">
+    <form action="" method="post" class="form form-horizontal" id="form-smallv-account_add" enctype="multipart/form-data">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>真实姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.realname}" placeholder="" id="realname" name="realname" disabled>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>身份证号码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.cardnum}" placeholder="" id="cardnum" name="cardnum" disabled>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手持正面照：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <img src="{$info.cardimg}" alt="手持正面照" style="width: 200px;height: 130px">
+            </div>
+        </div>
+		{if condition="$info.status == 2"}
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>认证时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.authtime|date='Y-m-d H:i:s',###}" placeholder="" id="overtime" name="overtime" disabled>
+            </div>
+        </div>
+		{else condition="$info.status == 3" /}
+		<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务失败原因</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                {$info.lose}
+            </div>
+        </div>
+		{/if}
+    </form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+{/block}

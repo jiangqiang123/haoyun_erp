@@ -1,0 +1,40 @@
+{extend name="base/base"}
+{block name="body"}
+
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="" enctype="multipart/form-data">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>会员昵称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.nickname}" placeholder="任务名称" id="adminName" name="title">
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机号码：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off" value="{$list.mobile}" placeholder="文章关键词" name="keywords">
+		</div>
+	</div>
+
+	<div class="row cl content1" data='1'>
+		<label class="form-label col-xs-4 col-sm-3">文章内容：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;" class="editor"  name="editorContact1" >{$list.content}</textarea>
+		</div>
+	</div>
+	
+	</form>
+</article>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+
+
+
+</script> 
+
+{/block}

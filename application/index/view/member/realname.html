@@ -1,0 +1,76 @@
+{extend name="base/base"}
+{block name="body"}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 会员管理 <span class="c-gray en">&gt;</span> 实名认证审核 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <div class="text-c">
+        <!-- <input type="text" class="input-text" style="width:250px" placeholder="输入真实姓名、身份证号" id="search" name="search">
+        <button type="submit" class="btn btn-success radius" id="" name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i> 搜索</button> -->
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"></span> <span class="r">共有数据：<strong>{$count}</strong> 条</span> </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <!-- <th width="25"><input type="checkbox" name="" value=""></th> -->
+                <th >ID</th>
+                <th >真实姓名</th>
+                <th >身份证号</th>
+                <th >手机号</th>
+                <th >手持照片</th>
+                <th >申请时间</th>
+                <th >状态</th>
+                <th >操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <!-- <td><input type="checkbox" value="1" name=""></td> -->
+                <td>{$vo.id}</td>
+                <td>{$vo.realname}</td>
+                <td>{$vo.cardnum}</td>
+                <td>{$vo.mobile}</td>
+                <td class="text-l"><img alt="" src="{$vo.cardimg}" style="width: 120px;height: 80px;"></td>
+                <td>{$vo.authtime}</td>
+                <td>申请审核中</td>
+                <td class="td-manage"><a title="审核" href="javascript:;" onclick="member_edit('审核','do_realname/id/{$vo.id}','4','','510')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a></td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    /*用户-添加*/
+    function member_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*用户-查看*/
+    function member_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*用户-编辑*/
+    function member_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*密码-修改*/
+    function change_password(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*用户-删除*/
+    function member_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!',{icon:1,time:1000});
+        });
+    }
+    /*用户-搜索*/
+    function search() {
+        var search = $('#search').val();
+        window.location= "/index/member/realname?search="+search;
+    }
+</script>
+{/block}

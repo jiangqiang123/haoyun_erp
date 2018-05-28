@@ -1,0 +1,290 @@
+{extend name="base/base"}
+{block name="body"}
+<!-- <style> -->
+	<!-- li{ -->
+				<!-- float:left; -->
+				<!-- list-style-type:none; -->
+				<!-- width:10px; -->
+				<!-- margin:1px; -->
+		 <!-- } -->
+	<!-- .active{ -->
+		<!-- color:#3399FF; -->
+	<!-- } -->
+
+<!-- </style> -->
+
+<style>
+	.pagination{
+		padding-top:10px
+	}
+    li{
+		float:left;
+		list-style-type:none;
+		width:10px;
+		margin:1px;
+		background: #fff;
+		display: inherit;
+		width: 25px;
+		border: 1px solid #2d8cf0;
+		border-radius: 2px;
+		text-align: center;
+		color:#000
+	}
+	.disabled{
+			color:#000
+		}
+    .active{
+        color:#fff;
+		background: #2d8cf0;
+    }
+</style>
+
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 会员管理 <span class="c-gray en">&gt;</span> 会员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+<div class="page-container">
+    <form action="" method="post">
+    <div class="text-c">
+		<select class="input-text" style="width:150px" name="type" id='type' onchange="funcss(this)">
+				<option value=""  >--选择搜索方式--</option>
+				<option value="1" {if condition="$map.type eq 1"}selected{/if} >手机号搜索</option>
+				<option value="2" {if condition="$map.type eq 2"}selected{/if} >姓名搜索</option>
+				<option value="3" {if condition="$map.type eq 3 "}selected{/if} >认证信息搜索</option>					
+		</select>
+		<input type="text" class="input-text" style="width:150px;{if condition="$map.type eq 3 || $map.type eq ''"}display:none;{/if}" placeholder="请填写" id="val" name="val" {if condition="$map.type eq 1 || $map.type eq 2"}value="{$map.val?$map.val:''}"{else /}value="" {/if}>
+		<select class="input-text" style="width:150px;{if condition="$map.type neq 3"}display:none;{/if}" name="status" id='apply'>
+				<option value=""  >--请选择认证信息--</option>
+				<option value="4" {if condition="$map.val eq 4  && $map.type eq 3"}selected{/if} >--未认证--</option>
+				<option value="1" {if condition="$map.val eq 1 && $map.type eq 3"}selected{/if} >--认证中--</option>
+				<option value="2" {if condition="$map.val eq 2 && $map.type eq 3"}selected{/if} >--已认证--</option>
+				<option value="3" {if condition="$map.val eq 3 && $map.type eq 3"}selected{/if} >--认证失败--</option>					
+		</select>
+		{if condition="$leader == 1" }
+		<select class="input-text" style="width:150px;display:none;" name="group" id="group">
+				<option value="">--请选择所属组长--</option>
+				{volist name="group" id="vo"}
+				<option value="{$vo.uid}" {if condition="$admin eq $vo.uid" }selected{/if}>{$vo.username}</option>
+				{/volist}
+		</select>
+		<select class="input-text" style="width:150px" name="team" id="team" >
+				<option value="">--请选择小组--</option>
+				{volist name="team" id="vo"}
+				<option value="{$vo.id}" {if condition="$map.team eq $vo.id" }selected{/if}>{$vo.name}</option>
+				{/volist}
+		</select>
+		{else /}
+		<select class="input-text" style="width:150px" name="group" id="group"  onchange="func(this)">
+				<option value="">--请选择所属组长--</option>
+				{volist name="group" id="vo"}
+				<option value="{$vo.uid}" {if condition="$map.group eq $vo.uid" }selected{/if}>{$vo.username}</option>
+				{/volist}
+		</select>
+		<select class="input-text" style="width:150px" name="team" id="team" >
+				<option value="">--请选择小组--</option>
+					{volist name="team" id="vo"}	
+					<option value="{$vo.id}" {if condition="$map.team eq $vo.id" }selected{/if}>{$vo.name}</option>
+					{/volist}
+		</select>
+		
+		{/if}
+		
+        <div  class="btn btn-success radius" id="" name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i> 搜用户</div>
+		
+    </div>
+    </form>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"></span><span class="r">共有数据：<strong>{$count}</strong> 条</span> </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <th width="25"><input type="checkbox" name="" value=""></th>
+                <th width="">ID</th>
+                <th width="">手机</th>
+                <th width="">微信名</th>
+				<th>真实姓名</th>
+                <th width="">所属小组长</th>
+				<th width="">所属小组</th>
+                <th width="">注册时间</th>
+                <th width="">登录时间</th>
+                <th width="">账号类型</th>
+                <th>认证信息</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td><input type="checkbox" value="1" name=""></td>
+                <td>{$vo.uid}</td>
+                <td>{$vo.mobile}</td>
+                <td>{$vo.nickname|base64_decode=###}</td>
+				<td >{$vo.realname|default=''}</td>
+                <td>{$vo.username}</td>
+				<td >{$vo.dname|default=''}</td>
+                <td>{$vo.regtime|date="Y-m-d H:i:s",###}</td>
+				{if condition="$vo.logtime neq 0"}
+                <td>{$vo.logtime|date="Y-m-d H:i:s",###}</td>
+				{else /}
+				<td>/</td>
+				{/if}
+                <td class="td-status">
+                    {if condition="($vo.experience eq 0) AND ($vo.apply neq 2)"}
+                    <span class="btn btn-primary-outline radius disabled size-MINI">普通</span>
+                    {else /}
+                    <span class="btn btn-warning-outline radius size-MINI disabled">小v</span>
+                    {/if}
+                </td>
+                {if condition="$vo.cstatus != ''"}
+                    {if condition="$vo.cstatus eq 1"}
+                    <td><btn class="btn btn-primary radius size-MINI disabled">认证中</btn></td>
+                    {elseif condition="$vo.cstatus eq 2" /}
+                    <td><btn class="btn btn-success radius size-MINI" onclick="admin_role_edit('认证信息','/index/member/member_real/uid/{$vo.uid}','','600','400')" title="点击查看">已认证</btn></td>
+                    {elseif condition="$vo.cstatus eq 3" /}
+					<td><btn class="btn btn-warning radius size-MINI " onclick="admin_role_edit('认证信息','/index/member/member_real/uid/{$vo.uid}','','600','400')" title="点击查看">认证失败</btn></td>
+                    <!-- <td><btn class="btn btn-warning radius size-MINI disabled " >认证失败</btn></td> -->
+                    {/if}
+                {else /}
+                    <td><btn class="btn disabled  radius size-MINI">未认证</btn></td>
+                {/if}
+                <td><btn class=" btn btn-default radius " onclick="admin_role_edit('个人信息','/index/member/member_info/uid/{$vo.uid}','','800','500')" title="点击查看">查看详情</btn></td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        {$page}
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+	page();
+	function page(){
+		$(".disabled li:last-child").addClass("liclass");
+	}
+	
+    $(function(){
+        $('.table-sort').dataTable({
+            "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable":false,"aTargets":[0,8,9]}// 制定列不参与排序
+            ]
+        });
+        $('.table-sort tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+    /*查看认证信息*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*用户-搜索*/
+    function search() {
+		
+		var group=$('#group').val();
+		var team=$('#team').val();
+		var type=$('#type').val();
+		if(type==1)
+		{
+			var val=$('#val').val();
+		}else if(type ==2)
+		{
+			var val=$('#val').val();
+		}else if(type ==3)
+		{
+			var val=$('#apply').val();
+		}else{
+			var  val='';
+		}
+		
+		if(team==null)
+		{
+			team='';
+		}
+		if(status== null)
+		{
+			status='';
+		}
+        window.location= "/index/member/member_list?type="+type+"&val="+val+"&group="+group+"&team="+team;
+    }
+	
+	
+	  function func(e)
+	  {
+		 var group=$(e).val();
+		 var a=$("#team");
+		 a.html("");
+		 if(group=='')
+		 {
+			a.append("<option value=''>---请选择---</option>");
+		 }else{
+			 $.ajax({
+			  url: '/index/smallv/obtain_team',
+			  type: 'post',
+			  data:{group:group},
+			  dataType: 'json',
+			  success: function (e) {
+				if(e.state=='y')
+				{
+					var str=e.msg;
+					var info="<option value=''>---请选择---</option>";
+					for(var i = 0;i < str.length; i++) {
+						info += "<option value='"+str[i].id+"'>"+str[i].name+"</option>";
+					}
+					a.append(info);
+				}else{
+					alert(e.msg+',请重新选择');
+					
+				}
+			  }
+			})
+		 }
+	  }
+	  
+	  function funcss(e)
+	  {
+		  var type=$(e).val();
+		  if(type == ''){
+				$('#val').val("");
+				$('#val').hide();
+				$('#apply').val("");
+				$('#apply').hide();
+				$('#val').attr("placeholder",'请填写');
+		  }else
+		  {
+			  $('#val').val("");
+			  $('#apply').val("");	  
+			  if(type == 1)
+			  {
+				$('#val').show();
+				$('#apply').hide();
+				$('#val').attr("placeholder",'请填写手机号搜索');
+				
+			  }else if(type ==2)
+			  {
+				$('#val').show();
+				$('#apply').hide();
+				$('#val').attr("placeholder",'请填写姓名');
+			  }else if(type==3)
+			  {
+				$('#val').hide();
+				$('#apply').show();
+				$('#val').attr("placeholder",'请填写');
+			  }
+		  
+		  }
+		  
+	  }
+
+
+</script>
+{/block}

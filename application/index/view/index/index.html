@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <LINK rel="Bookmark" href="/favicon.ico" >
+    <LINK rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="__PUBLIC__/lib/html5.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/lib/respond.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/lib/PIE_IE678.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/lib/Hui-iconfont/1.0.7/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/lib/icheck/icheck.css" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/style.css" />
+    <!--[if IE 6]>
+
+
+    <![endif]-->
+    <title>小V数据中心</title>
+    <meta name="keywords" content="H-ui.admin v2.4,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="H-ui.admin v2.4，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+    <style>
+    .clear{
+        float:right;margin-top:5px;
+    }
+</style>
+</head>
+<body>
+<header class="navbar-wrapper">
+    <div class="navbar navbar-fixed-top">
+        <div class="container-fluid cl"> <a class="logo navbar-logo f-l mr-10 hidden-xs" href="/aboutHui.shtml">小V数据中心</a> <a class="logo navbar-logo-m f-l mr-10 visible-xs" href="/aboutHui.shtml">小V数据中心</a> <span class="logo navbar-slogan f-l mr-10 hidden-xs">v0.1</span> <a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
+            <nav class="nav navbar-nav">
+                <ul class="cl">
+                    <li class="dropDown dropDown_hover"><a href="javascript:;" class="dropDown_A"><i class="Hui-iconfont">&#xe600;</i> 新增 <i class="Hui-iconfont">&#xe6d5;</i></a>
+                        <ul class="dropDown-menu menu radius box-shadow">
+                            <li><a href="javascript:;" onclick="article_add('添加资讯','article-add.html')"><i class="Hui-iconfont">&#xe616;</i> 资讯</a></li>
+                            <li><a href="javascript:;" onclick="picture_add('添加资讯','picture-add.html')"><i class="Hui-iconfont">&#xe613;</i> 图片</a></li>
+                            <li><a href="javascript:;" onclick="product_add('添加资讯','product-add.html')"><i class="Hui-iconfont">&#xe620;</i> 产品</a></li>
+                            <li><a href="javascript:;" onclick="member_add('添加用户','member-add.html','','510')"><i class="Hui-iconfont">&#xe60d;</i> 用户</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
+                <ul class="cl">
+                    <li>管理员</li>
+                    <li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">{$member} <i class="Hui-iconfont">&#xe6d5;</i></a>
+                        <ul class="dropDown-menu menu radius box-shadow">
+                            <li><a href="#">个人信息</a></li>
+                            <li><a href="#">切换账户</a></li>
+                            <li><a href="{:url('login/logout')}">退出</a></li>
+                        </ul>
+                    </li>
+                    <li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
+                    <li id="Hui-skin" class="dropDown right dropDown_hover"> <a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
+                        <ul class="dropDown-menu menu radius box-shadow">
+                            <li><a href="javascript:;" data-val="default" title="默认（黑色）">默认（黑色）</a></li>
+                            <li><a href="javascript:;" data-val="blue" title="蓝色">蓝色</a></li>
+                            <li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
+                            <li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
+                            <li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
+                            <li><a href="javascript:;" data-val="orange" title="绿色">橙色</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+<aside class="Hui-aside">
+    <input runat="server" id="divScrollValue" type="hidden" value="" />
+    <div class="menu_dropdown bk_2">
+        {volist name="rules" id="vo"}
+        {if condition="$vo.pid == 0 "}
+        <dl id="menu-member">
+            <dt><i class="Hui-iconfont">{$vo.icon}</i> {$vo.title}<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    {volist name="rules" id="v"}
+                    {if condition="$vo.id == $v.pid "}
+                        <li><a _href="/{$v.module}/{$v.name}" data-title="{$v.title}" href="javascript:;">{$v.title}</a></li>
+                    {/if}
+                    {/volist}
+                </ul>
+            </dd>
+        </dl>
+        {/if}
+        {/volist}
+    </div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+<section class="Hui-article-box">
+    <div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
+        <div class="Hui-tabNav-wp">
+            <ul id="min_title_list" class="acrossTab cl">
+                <li class="active"><span title="我的桌面" data-href="welcome.html">我的桌面</span><em></em></li>
+            </ul>
+
+            <span class="clear"><i class="Hui-iconfont">&#xe706;</i></span>
+        </div>
+        <div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d4;</i></a><a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d7;</i></a></div>
+
+    </div>
+    <div id="iframe_box" class="Hui-article">
+        <div class="show_iframe">
+            <div style="display:none" class="loading"></div>
+            <iframe scrolling="yes" frameborder="0" src='{:url("index/welcome")}'></iframe>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/layer/2.1/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/h-ui/js/H-ui.admin.js"></script>
+<script>
+    
+    //将原有的数据渲染上去（菜单栏）gao
+    $(function () { 
+        if(getCookie("jq_url") != 'undefined' &&  getCookie("jq_url") != 'null' && getCookie("jq_url") !='' && getCookie("jq_url") != null){
+            // 将页面渲染上去
+            info_li(getCookie("jq_url").split(","));
+        }
+    });
+    //e是名字   f是url  gao 
+     function info_li(e){
+        
+        if(e.indexOf(getCookie('jq_active')) != -1){
+            //不存在
+            $('.show_iframe').attr('style','display:none;');
+            $('#min_title_list').children().first().removeClass('active');
+        }   
+        var str=''; 
+        var info='';
+        for(var i=0;i<e.length;i++){
+            var a=[];
+            a=e[i].split("-");
+            if( e[i] == getCookie('jq_active')){
+                info += '<div class="show_iframe" >';
+                info += '<div style="display:none;" class="loading"></div>';
+                info += '<iframe scrolling="yes" frameborder="0" src="'+a[0]+'"></iframe></div>';
+                str += '<li class="active"><span  data-href="'+a[0]+'">'+a[1]+'</span><i></i><em></em></li>';   
+            }else{
+                info += '<div class="show_iframe" style="display:none">';
+                info += '<div style="display:none;" class="loading"></div>';
+                info += '<iframe scrolling="yes" frameborder="0" src="'+a[0]+'"></iframe></div>';
+                str += '<li class=""><span  data-href="'+a[0]+'">'+a[1]+'</span><i></i><em></em></li>';
+            }               
+        }
+        $("#min_title_list").append(str);
+        $("#iframe_box").append(info);
+        var len=108*parseInt(e.length)+241;     
+        $('#min_title_list').attr('style','width: '+len+'px; left: 0px;');  
+     }
+
+    //删除cookice   gao
+     function cookice_del(e){
+        var sub=$(e).prev().attr('data-href');
+        //;+'-'+$(e).prev().html()
+        var alld=getCookie("jq_url").split(",");
+        var news=[];
+        for(var i=0;i<alld.length;i++){
+            news[i]=alld[i].split("-")[0];              
+        }
+
+        if(news.indexOf(sub) != -1){
+            var new_url=[];
+            var d=0;
+            for(var i=0;i<news.length;i++){
+                if(news[i] != sub){
+                    new_url[d]= alld[i];
+                    d++;
+                }
+            }
+            if(new_url == '' || new_url=='null' || new_url== null){
+                setCookie('jq_url',null);
+            }else{
+                setCookie('jq_url',new_url.join(),0.1);
+            }
+        }
+     }
+     
+     //关闭所有
+     $('.clear').click(function(){ 
+        setCookie('jq_url',null);
+        setCookie('jq_active',null);
+        location.reload();
+     })
+
+</script>
+
+</body>
+</html>

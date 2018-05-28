@@ -1,0 +1,97 @@
+{extend name="base/base"}
+{block name="body"}
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	{volist name="config" id="vo"}
+
+	{if condition="$vo.title eq '站点状态'"}
+	<div class="row cl ">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>{$vo.title}：</label>
+		<div class="formControls col-xs-8 col-sm-9 status" data='{$vo.value}'>
+			<input type="radio"  value="1" name="{$vo.id}" checked class='change'><span>开启站点</span>&nbsp;&nbsp;&nbsp;
+			<input type="radio" value="0"  name="{$vo.id}" class='change'><span>关闭站点</span>
+		</div>
+	</div>
+	{elseif condition="$vo.title eq '关闭原因'" /}
+	<div class="row cl lose">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>{$vo.title}：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$vo.value}" placeholder="" id="adminName" name="{$vo.id}">
+		</div>
+	</div>
+	{elseif condition="$vo.name eq 'IS_CODE_REG'" /}
+	<div class="row cl groups">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>{$vo.title}：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select name="{$vo.id}" >
+					<option value="1" {if condition="$vo.value eq 1"} selected="selected" {/if}>开启激活码</option>
+					<option value="0" {if condition="$vo.value eq 0"} selected="selected" {/if}>关闭激活码</option>
+				</select>
+			</div>
+		</div>
+	
+	{else /}
+	<div class="row cl ">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>{$vo.title}：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$vo.value}" placeholder="" id="adminName" name="{$vo.id}">
+		</div>
+	</div>
+	{/if}
+	{/volist}
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+
+	$(function(){
+        if($('.status').attr('data')==1){
+        	$('.lose').hide();
+        }else{
+        	$('.lose').show();
+        }
+    });
+
+		$('.change').click(function(){
+			if($(this).val()==1){
+				$('.status').attr('data','1');
+				$('.lose').hide();
+			}else{
+				$('.status').attr('data','0');
+				$('.lose').show();
+			}
+		})
+
+
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+    	alert(date.msg);
+    	location.reload();
+   }else{
+     alert(date.msg);
+   }
+
+  }
+  function test(o) {
+  	var url='/index/platform/config_setting';
+   	ajax_form(ids,url,result);
+  }
+	
+
+</script> 
+
+{/block}

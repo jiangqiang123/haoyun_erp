@@ -1,0 +1,132 @@
+{extend name="base/base"}
+{block name="body"}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 小v管理 <span class="c-gray en">&gt;</span>小v成长体系 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <form action="" method="post">
+    <div class="text-c">
+        <!-- 账号类型:
+        <span class="select-box inline">
+        <select name="type" class="select" style="font-size: 11px;">
+            <option value="">全部分类</option>
+            {volist name="data" id="vo"}
+            <option value="{$vo.id}" {if condition="$vo.id eq $map.type"}selected{/if}>{$vo.name}</option>
+            {/volist}
+        </select></span>&nbsp;&nbsp;
+        分配状态:
+        <input type="radio" name="status" value="1" class="radio" {if condition="$map.status eq 1"}checked{/if}><span style="font-size: 12px;">未分配</span>&nbsp;
+        <input type="radio" name="status" value="2" class="radio" {if condition="$map.status eq 2"}checked{/if}><span style="font-size: 12px;">已分配</span>
+        &nbsp;&nbsp;&nbsp;
+        <input type="text" class="input-text" style="width:250px" placeholder="输入账号" id="search" name="search" value="{$map.search?$map.search:''}">
+        <button type="submit" class="btn btn-success radius" id="" name="" ><i class="Hui-iconfont">&#xe665;</i> 搜索</button> -->
+    </div></form><br/>
+    <div class="cl pd-5 bg-1 bk-gray"> <span class="l"><a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加成长体系','{:url("Smallv/grow_add")}','800','500')"><i class="Hui-iconfont">&#xe600;</i> 添加成长体系</a> </span><span class="r">共有数据：<strong>{$count}</strong> 条</span></div>
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">等级类型</th>
+        </tr>
+        <tr class="text-c">
+            <th ><input type="checkbox" value="" name=""></th>
+            <th >ID</th>
+            <th >类型</th>
+            <th >经验奖励</th>
+            <th >金币奖励</th>
+            <th >添加时间</th>
+            <th >状态</th>
+            <th >操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr  class="text-c">
+            <td><input type="checkbox" value="" name=""></td>
+            <td>{$vo.id}</td>
+            <td>{$vo.type}</td>
+            <td>{$vo.experience}</td>
+            <td>{$vo.gold}</td>
+            <td>{$vo.addtime|date="Y-m-d",###}</td>
+            {if condition="$vo.status eq 1"}
+            <td class="td-status"><span class="btn btn-success radius size-MINI disabled">已启用</span></td>
+            {else /}
+            <td class="td-status"><span class="btn radius size-MINI disabled">已禁用</span></td>
+            {/if}
+            <td class="td-manage">
+                <a title="编辑" href="javascript:;" onclick="admin_role_edit('编辑账号','/index/smallv/grow_edit/id/{$vo.id}','','800','500')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                <a title="删除" href="javascript:;" onclick="admin_group_del(this,'{$vo.id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    /*管理员-角色-添加*/
+    function admin_role_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*管理员-角色-编辑*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*管理员-停用*/
+    function admin_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={status : 0,id:id};
+//		var url='/index/task/';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,'+id+')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+                    $(obj).remove();
+                    layer.msg('已停用!',{icon: 5,time:1000});
+                }else{
+                    layer.msg('修改失败!',{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+        });
+    }
+
+    /*管理员-启用*/
+    function admin_start(obj,id){
+        layer.confirm('确认要启用吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={status : 1,id:id};
+            //var url='/index/admin/group_list';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,'+id+')" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                    $(obj).remove();
+                    layer.msg('已启用!', {icon: 6,time:1000});
+                }else{
+                    layer.msg(date.msg,{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+        });
+    }
+    /*管理员-角色-删除*/
+    function admin_group_del(obj,id){
+        layer.confirm('小v账号删除须谨慎，确认要删除吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={id:id};
+            var url='/index/smallv/account_del';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                }else if(date.state=='n'){
+                    layer.msg('删除失败!',{icon:1,time:2000});
+                }else{
+                    layer.msg(date.msg,{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+
+        });
+    }
+</script>
+{/block}

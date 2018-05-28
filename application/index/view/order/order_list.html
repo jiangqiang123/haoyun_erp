@@ -1,0 +1,245 @@
+{extend name="base/base"}
+{block name="body"}
+<style>
+	.pagination{
+		padding-top:10px
+	}
+    li{
+		float:left;
+		list-style-type:none;
+		width:10px;
+		margin:1px;
+		background: #fff;
+		display: inherit;
+		width: 25px;
+		border: 1px solid #2d8cf0;
+		border-radius: 2px;
+		text-align: center;
+		color:#000
+	}
+	.disabled{
+			color:#000
+		}
+    .active{
+        color:#fff;
+		background: #2d8cf0;
+    }
+</style>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 任务管理 <span class="c-gray en">&gt;</span> 任务列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		 <!-- 日期范围：
+		
+		<input type="text" class="input-text" style="width:250px" placeholder="输入管理员名称" id="" name="">
+		<button type="submit" class="btn btn-success" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button> -->
+		<select name="" id="status" class="input-text" style="width:130px;">
+			<option value="" >全部订单</option>
+			<option value="1" {if condition="$status==1"}selected {/if}>执行中订单</option>
+			<option value="2" {if condition="$status==2"}selected {/if}>待审核订单</option>
+			<option value="3" {if condition="$status==3"}selected {/if}>已流单订单</option>
+			<option value="4" {if condition="$status==4"}selected {/if}>任务失败订单</option>
+			<option value="5" {if condition="$status==5"}selected {/if}>任务完成订单</option>
+			
+		</select>
+		 <!-- <input type="text" class="input-text" style="width:250px" placeholder="接单者账号" id="search" name="search" value="{$where['search']?$where['search']:''}" > -->
+		 <input type="hidden" id="oid" name="id" value="{:input('id')}">
+        <button type="submit" class="btn btn-success radius" id="" name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i> 搜任务</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="batch_aud(this)" class="btn btn-danger radius" title="批量审核通过" ><i class="Hui-iconfont">&#xe647;</i> 批量审核通过</a></span> <span class="no" style="display:none;"><a href="javascript:;"class="btn btn-danger radius" title="批量审核中" ><i class="Hui-iconfont">&#xe647;</i> 审核操作中</a></span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="10">任务列表</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value="" class="quan"></th>
+				<th >ID</th>
+				<th >接单者账号</th>
+				<th >姓名</th>
+				<th >接取任务量</th>
+				<th >订单生成时间</th>
+				<th >状态</th>
+				<th >操作</th>
+			</tr>	
+		</thead>
+		<tbody>
+  			{volist name="list" id="vo"}
+  				<tr class="text-c">
+  					{if condition="$vo.status eq 2"}
+  					<td><input type="checkbox" name="id[]" value="{$vo.id}"></td>
+  					{else /}
+  					<td></td>
+  					{/if}
+  					<td>{$vo.id}</td>
+  					<td>{$vo.mobile}</td>
+					{if condition="$vo.realname eq ''"}
+					<td>/</td>	
+					{else /}
+  					<td>{$vo.realname}</td>
+  					{/if}
+  					<td>{$vo.number}</td>
+  					<td>{$vo.addtime|date="Y-m-d H:i:s",###}</td>
+					{if condition="$vo.status eq 1"}
+  					<td ><span class="btn btn-secondary-outline radius">任务中</span></td>
+  					{elseif condition="$vo.status eq 2" /}
+					<td ><span class="btn btn-primary-outline radiuss">待审核</span></td>
+					{elseif condition="$vo.status eq 3" /}
+					<td ><span class="btn btn-warning-outline radius">流单</span></td>
+					{elseif condition="$vo.status eq 4" /}
+					<td ><span class="btn btn-danger-outline radius">任务失败</span></td>
+					{elseif condition="$vo.status eq 5" /}
+					<td ><span class="btn btn-success-outline radius">任务成功</span></td>
+					{/if}
+  					<td>
+  						<a title="查看订单详情" href="javascript:;" onclick="admin_edit('任务详情','/index/order/order_details?id={$vo.id}','1','800','500')" style="text-decoration:none"><i class="Hui-iconfont">&#xe695;</i></a>
+						{if condition="$vo.status eq 2"}
+  						<a title="审核订单" href="javascript:;" onclick="admin_edit('审核订单','/index/order/order_auditing?id={$vo.id}','1','800','500')" style="text-decoration:none"><i class="Hui-iconfont">&#xe647;</i></a>
+						{/if}
+  					</td>
+  				</tr>
+  			{/volist}
+		</tbody>
+
+	</table>
+	{$page}
+</div>
+<script type="text/javascript">
+
+	page();
+	function page(){
+		$(".disabled li:last-child").addClass("liclass");
+	}
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-增加*/
+function admin_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+// //在主页面添加栏目在右侧显示
+//  function father_add(e) {
+// 		//第三个参数  1是名称  2是url  3是否存cookice  1存  0不存
+// 		window.parent.window.parenttest($(e).attr('title'),$(e).attr('data-href'),1);         
+//  }
+ 
+/*管理员-删除*/
+function admin_del(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={uid:id};
+		var url='/index/admin/admin_del';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").remove();
+				layer.msg('已删除!',{icon:1,time:1000});
+			}else{
+				layer.msg(date.msg,{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+		
+	});
+}
+/*管理员-编辑*/
+function admin_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-停用*/
+function admin_stop(obj,id){
+	layer.confirm('确认要停用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 0,uid:id};
+		var url='/index/admin/admin_list';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,'+id+')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+				$(obj).remove();
+				layer.msg('已停用!',{icon: 5,time:1000});
+			}else{
+				layer.msg('修改失败!',{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+	});
+}
+
+/*管理员-启用*/
+function admin_start(obj,id){
+	layer.confirm('确认要启用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 1,uid:id};
+		var url='/index/admin/admin_list';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,'+id+')" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+				$(obj).remove();
+				layer.msg('已启用!', {icon: 6,time:1000});
+			}else{
+				layer.msg('修改失败!',{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+	});
+}
+
+
+	//搜索
+	function search(){
+		var search=$('#search').val();
+		var status=$('#status').val();
+		var id=$('#oid').val();
+		if((search!='' && search!=null) || (status!='' && status !=null)){
+			window.location.href='/index/order/order_list?id='+id+'&status='+status;
+		}else{
+			window.location.href='/index/order/order_list?id='+id;
+		}
+	}
+
+
+	//订单审核的批量审核
+	//任务批量审核
+	//var kaiguan=1;
+	function batch_aud(o){
+		var selectedItems = new Array(); 
+		$("input[name='id[]']:checked").each(function() {selectedItems.push($(this).val());});
+		//要穿的多个id值 selectedItems.join(',')
+		if(selectedItems.length ==0){
+			alert('请勾选要批量审核的订单');
+		}else{
+			$('.l').hide();
+			$('.no').show();
+			//ajax传送
+			var data={id:selectedItems.join(',')}
+			var url='/index/order/order_batch';
+			var render=function(date){
+				if(date.state=='y'){
+					alert(date.msg);
+					window.location.reload();
+				}else{
+					alert('审核出错');
+					$('.l').show();
+					$('.no').hide();
+				}
+			}
+			ajax_data(data,url,render);
+		}
+
+		// if(kaiguan){
+	 //      alert('执行第一次操作');
+	 //      kaiguan = 0;
+	 //  	}
+
+	}
+
+
+
+</script>
+{/block}

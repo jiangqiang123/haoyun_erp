@@ -1,0 +1,220 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<!-- <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" /> -->
+    <!-- // <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script> -->
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="" enctype="multipart/form-data">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文章名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$info.title}" placeholder="任务名称" id="adminName" name="title">
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>关键词：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off" value="{$info.keywords}" placeholder="文章关键词" name="keywords">
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>摘要</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off"  placeholder="文章摘要" name="description" value="{$info.description}">
+		</div>
+	</div>
+	
+	<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">缩略图：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+				<input class="input-text upload-url" type="text" name="thumb" id="uploadfile" readonly nullmsg="请添加附件！" style="width:200px" value="{$info.thumb}">
+				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 上传图片</a>
+				<input type="file" multiple name="file-2" class="input-file">
+				</span> </div>
+    </div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文章栏目：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select id='sel1' class="select" name="catid"  >
+				{volist name='cateid' id='vo'}
+				<option value="{$vo.id}" pid="{$vo.pid}" {if condition="$vo.id eq $info.catid"}selected{/if} >{$vo.title}</option>
+				{/volist}		
+			</select>
+			</span>
+			</div>
+	</div>
+
+	<div class="row cl content1" data='1'>
+		<label class="form-label col-xs-4 col-sm-3">文章内容：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;" class="editor"  name="editorContact1" >{$info.content}</textarea>
+		</div>
+	</div>
+
+
+	<input type="hidden" name='id' value="{:input('get.id')}" id="hidden">
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+    $(function(){
+        var box = document.getElementsByClassName("editor");
+        for (i=0;i<($('.editor').length);i++){
+            $('.editor').eq(i).attr('name');
+            $('.editor').eq(i).attr('id', $('.editor').eq(i).attr('name'));
+           new UE.ui.Editor({} ).render($('.editor').eq(i).attr('name') );
+
+        }
+
+        $('#date01').val('');
+        types();
+
+    });
+
+
+
+	function show(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.time').hide();
+			$('.time').children().val('');
+		}else{
+			$('.time').show();
+		}
+	}
+
+	function shows(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.times').hide();
+			$('.times').children().val('');
+		}else{
+			$('.times').show();
+		}
+	}
+
+	$('.num').blur(function(){
+		var inpVal =$(this).val();
+		if(inpVal<=0 ){
+			$(this).val('');
+		}
+	})
+
+
+
+
+       window.onload = function() {
+       window.UEDITOR_CONFIG.initialFrameWidth = 750; //初始化编辑器宽度
+       window.UEDITOR_CONFIG.initialFrameHeight = 200;  //初始化编辑器高度
+       //自定义请求地址
+       UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+       UE.Editor.prototype.getActionUrl = function(action) {
+
+           if (action == 'uploadimage') {    //上传图片
+
+               return "/index/article/uploadss?action=uploadimage";
+
+           } else  if(action == 'config') {    //加载配置
+
+               return this._bkGetActionUrl.call(this, action);
+           }
+       }
+       //自定义请求地址结束
+       UE.getEditor('content');
+   }
+
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+	    //父级页面
+	    modal_alert(date.msg,2000);
+	    $(window.parent.location.reload());
+   }else{
+     	alert(date.msg);
+   }
+
+  }
+  
+  function test(o) {
+  	
+
+  	var id = $('#hidden').val();
+		if(id){
+			var url = '/index/article/article_edit';
+		}else{
+			var url='/index/article/article_add';
+		}
+
+   	ajax_form(ids,url,result);
+  }
+
+  //获取类别
+  function types(e){
+  	$('.hide').children().attr('checked',false);
+  	var pid=$('#sel1 option:selected').attr('pid');
+  	if(pid != ''){
+  		var obj=$('.hide');
+  		obj.each(function(){
+  			var va=$(this).children().val();
+  			if(pid.indexOf(va) !=-1){
+  				$(this).show();
+  			}else{
+  				$(this).hide();
+  			}
+  		})
+  	}
+  }
+
+  // 获取类型
+  // function types(e){
+  // 	modal_alert('请稍等',1000);
+  //   document.getElementById("sel2").options.length=0;
+  // 	if($(e).val() != ''){
+  // 		var pid=$('#sel1 option:selected').attr('pid');
+  // 		var url='/index/task/get_categroy';
+  // 		var data={pid:pid};
+  // 		var render=function(date){
+  // 			if(date.state=='y'){
+  // 				add_option(date.msg);
+  // 			}else{
+  // 				alert(date.msg);
+  // 			}
+  // 		}
+  // 		ajax_data(data,url,render);
+  // 	}else{
+  // 		document.getElementById("sel2").options.add(new Option("--请选择--",""));
+  // 	}
+  // }
+  
+  // //添加option
+  // function add_option(e){
+  // 		document.getElementById("sel2").options.add(new Option("--请选择--",""));
+  // 		for (var i = 0; i <e.length; i++) {
+  // 			document.getElementById("sel2").options.add(new Option(e[i].name,e[i].id));
+  // 		};
+  // }
+	
+
+</script> 
+
+{/block}

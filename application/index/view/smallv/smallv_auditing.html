@@ -1,0 +1,217 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>实名认证：</label>
+
+		<div class="formControls col-xs-8 col-sm-9">
+			<div><span>{$real.realname}</span>  {$real.cardnum} </div>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>实名图片：</label>
+
+		<div class="formControls col-xs-8 col-sm-9">
+			<div><img src="{$real.cardimg}" alt="手持正面照" style="width:50%;"></div>
+		</div>
+	</div>
+
+	<div class="row cl">
+	        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>审核结果：</label>
+	        <div class="formControls col-xs-8 col-sm-9">
+	        	{if condition="$real.status eq 1"}
+	            <input type="radio"  name="status" value="2" onclick="checkreal(this)" checked="checked">认证通过&nbsp;&nbsp;&nbsp;
+	            <input type="radio" name="status"  value="3" onchange="ischeckedreal(this)"  >认证失败
+	            {elseif condition="$real.status eq 2"/}
+	            <div>已审核通过</div>
+	            {/if}
+	        </div>
+	    </div>
+		<div class="row cl groups">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所属组长：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select name="group" id="grou" onchange="func(this)">
+					<option value="">--请选择--</option>
+					{volist name="info" id="vo"}
+					<option value="{$vo.uid}">{$vo.username}</option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		
+		<div class="row cl team" style="display:none;">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所属小组：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select name="team" id="team">
+					<option value="">--请选择--</option>
+				</select>
+			</div>
+		</div>
+		
+		
+		
+	
+	    <div class="row cl lose_real " style="display: none">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>认证失败原因：</label>
+            
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="real_lose" cols="" rows="" class="textarea"  placeholder="填写审核原因..." onKeyUp="textarealength(this,100)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+    	</div> <br>	
+
+		
+
+	<!-- {volist name='order' id="vo" key="k"} -->
+	<!-- <div class="row cl"> -->
+		<!-- <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>新手任务{$k}名称：</label> -->
+
+		<!-- <div class="formControls col-xs-8 col-sm-9"> -->
+			<!-- <div>{$vo.details.name}</div> -->
+		<!-- </div> -->
+	<!-- </div> -->
+
+
+	<!-- <div class="row cl"> -->
+		<!-- <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>新手任务{$k}回执图片：</label> -->
+
+		<!-- <div class="formControls col-xs-8 col-sm-9"> -->
+			<!-- {if condition="$vo.result_pic neq null"} -->
+			<!-- {volist name="vo.result_pic" id="pic"} -->
+				<!-- <img src="{$pic}" alt="" style="width:50%;"> -->
+			<!-- {/volist} -->
+			<!-- {else /} -->
+				<!-- <div>暂无提交图片</div> -->
+			<!-- {/if} -->
+		<!-- </div> -->
+	<!-- </div> -->
+
+		<!-- <div class="row cl"> -->
+	        <!-- <label class="form-label col-xs-4 col-sm-3">审核结果：</label> -->
+	        <!-- <div class="formControls col-xs-8 col-sm-9"> -->
+	            <!-- <input type="radio"  name="check{$vo.id}" value="5" onclick="check(this)" data-id="{$vo.id}" checked="checked">任务通过&nbsp;&nbsp;&nbsp; -->
+	            <!-- <input type="radio" name="check{$vo.id}"  value="4" onchange="ischecked(this)" data-id="{$vo.id}" >任务失败 -->
+	        <!-- </div> -->
+	    <!-- </div> -->
+	    <!-- <div class="row cl lose lose{$vo.id}" style="display: none"> -->
+            <!-- <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>原因：</label> -->
+            
+            <!-- <div class="formControls col-xs-8 col-sm-9"> -->
+                <!-- <textarea name="lose{$vo.id}" cols="" rows="" class="textarea{$vo.id}"  placeholder="填写审核原因..." onKeyUp="textarealength(this,100)"></textarea> -->
+                <!-- <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p> -->
+            <!-- </div> -->
+    	<!-- </div> -->
+		<!-- <input type="checkbox" value="{$vo.id}" name="oid[]" class="check{$vo.id}" style="display: none" > -->
+
+	<!-- {/volist} -->
+
+	<input type="hidden" name="uid" value="{:input('id')}">
+    <div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<btn type="submit" class="btn btn-success radius" id="admin-role-save"  onclick="test(this)"><i class="icon-ok"></i> 确定</btn>
+			</div>
+		</div>
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	function ischeckedreal(o){
+        $('.lose_real').css('display','block');
+        $('.textarea').val('');
+		$('#grou').val('');
+        $(".groups").hide();
+		$('.team').hide();
+		$('#team').html("");
+    }
+
+    function checkreal(o) {
+        $('.lose_real').css('display','none');
+        $('.textarea').val('');
+		$('#grou').val('');
+		$(".groups").show();
+		$('.team').hide();
+		$('#team').html("");
+    }
+
+    <!-- function check(o){ -->
+    	<!-- $('.lose'+$(o).attr('data-id')).css('display','none'); -->
+    	<!-- $('.textarea'+$(o).attr('data-id')).val(''); -->
+    	<!-- $('.check'+$(o).attr('data-id')).prop("checked",false); -->
+
+    <!-- } -->
+
+
+    <!-- function ischecked(o){ -->
+    	<!-- $('.lose'+$(o).attr('data-id')).css('display','block'); -->
+    	<!-- $('.check'+$(o).attr('data-id')).prop("checked",true); -->
+    <!-- } -->
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+    //父级页面
+     $(window.parent.location.reload());
+
+   }else{
+     alert(date.msg);
+   }
+
+  }
+  function test(o) {
+  	var url='/index/smallv/smallv_auditing';
+   	ajax_form(ids,url,result);
+  }
+  
+  function func(e)
+  {
+	 var group=$(e).val();
+	 var a=$("#team");
+	 a.html("");
+	 if(group=='')
+	 {
+		a.append("<option value=''>---请选择---</option>");
+		$('.team').hide();
+	 }else{
+		 $.ajax({
+		  url: '/index/smallv/obtain_team',
+		  type: 'post',
+		  data:{group:group},
+		  dataType: 'json',
+		  success: function (e) {
+			if(e.state=='y')
+			{
+				$('.team').show();	
+				var str=e.msg;
+				var info="<option value=''>---请选择---</option>";
+				for(var i = 0;i < str.length; i++) {
+					info += "<option value='"+str[i].id+"'>"+str[i].name+"</option>";
+				}
+				a.append(info);
+			}else{
+				$('.team').show();
+				alert(e.msg+',请重新选择');
+				
+			}
+		  }
+		})
+	 }
+  }
+	
+
+</script> 
+
+{/block}

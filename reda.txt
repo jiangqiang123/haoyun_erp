@@ -1,0 +1,9 @@
+{
+    "inputs": [
+    {
+        "image": {
+            "dataType": 50,                         
+            "dataValue": "aHR0cDovL3ZzLnRvbW1tdC5jb20vc3RhdGljL2NhcmQuanBn"      
+        }
+    }]
+}

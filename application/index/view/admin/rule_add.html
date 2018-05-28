@@ -1,0 +1,92 @@
+{extend name="base/base"}
+{block name="body"}
+<div class="Huialert Huialert-error" style="display:none"></div>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>英文名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="" placeholder="" id="adminName" name="name">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>中文名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="" placeholder="" id="adminNames" name="title">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>状态：</label>
+		<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+			<div class="radio-box">
+				<input name="hide" type="radio" id="sex-1" value='1' checked>
+				<label for="sex-1">显示</label>
+			</div>
+			<div class="radio-box">
+				<input type="radio" id="sex-2" name="hide" value='0'>
+				<label for="sex-2">隐藏</label>
+			</div>
+		</div>
+	</div>
+	<div class="row cl sss">
+		<label class="form-label col-xs-4 col-sm-3">所属类型：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select selectlev" name="pid" size="1" onchange="change(this)">
+				<option value="0">顶级菜单</option>
+				{volist name="fath" id="vo"}
+					<option value="{$vo.id}" >&nbsp;&nbsp;&nbsp;|{$vo.title}</option>
+				{/volist}
+			</select>
+			</span> </div>
+	</div>
+
+	<div class="row cl icons">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>图标：</label>
+		<div class="formControls col-xs-2 col-sm-2">
+			<input type="text" class="input-text" value="" placeholder="" id="adminNames" name="icon">
+		</div>
+	</div>
+	<input type="hidden" name="module" value="index">
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" type="submit" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	
+	var ids="form-admin-add";
+
+	var result=function(date){
+	   if(date.state=="y"){
+			//父级页面刷新
+			modal_alert(date.msg,2000);
+			$(window.parent.location.reload());
+
+	   }else{
+			modal_alert(date.msg);
+	   }
+	}
+
+	function test(o) {
+		url='/index/admin/rule_add';
+		ajax_form(ids,url,result);
+	}
+	function change(e){
+		var pid=$(e).val();
+		if(pid == 0){
+			$('.icons').show();
+		}else{
+			$('.icons').hide();
+		}
+	}
+	
+
+</script> 
+
+{/block}

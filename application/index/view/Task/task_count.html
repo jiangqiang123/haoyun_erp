@@ -1,0 +1,244 @@
+{extend name="base/base"}
+{block name="body"}
+<script src="__TIME__/laydate.js"></script>
+<style>
+	.pagination{
+		padding-top:10px
+	}
+    li{
+		float:left;
+		list-style-type:none;
+		width:10px;
+		margin:1px;
+		background: #fff;
+		display: inherit;
+		width: 25px;
+		border: 1px solid #2d8cf0;
+		border-radius: 2px;
+		text-align: center;
+		color:#000
+	}
+	.disabled{
+			color:#000
+		}
+    .active{
+        color:#fff;
+		background: #2d8cf0;
+    }
+</style>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 任务管理 <span class="c-gray en">&gt;</span> 任务统计 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+<div class="page-container">
+	<div class="text-c">
+		 <select name="" id="type" class="input-text" style="width:200px;" onchange="func(this)">
+			<option value="" >---请选择统计方式---</option>
+			<option value="1" {if condition="$num['type']==1"}selected {/if} >--今日统计--</option>
+			<option value="2" {if condition="$num['type']==2"}selected {/if}>--本月统计--</option>
+			<option value="3" {if condition="$num['type']==3"}selected {/if}>--总统计--</option>
+			<option value="4" {if condition="$num['type']==4"}selected {/if}>自行选择时间</option>
+			<!-- <option value="4" {if condition="$status==4"}selected {/if}>任务失败订单</option> -->
+			<!-- <option value="5" {if condition="$status==5"}selected {/if}>任务完成订单</option>		 -->
+		</select>
+		
+		<input id="time" class="laydate-icon" value="{$num['time']}" placeholder="请选择查询时间" {if condition="$num['type']!=4"} style="display:none" {/if} >
+					<script>
+					laydate({
+					  elem: '#time', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+					  event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+					});
+					</script>
+		
+        <div type="submit" class="btn btn-success radius" id="" name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i> 搜任务</div>
+	</div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="11">任务统计</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25">时间</th>
+				<th width="60">发布任务</th>
+				<th width="60">任务总量</th>
+				<th width="60">任务完成量</th>
+				<th width="60">任务审核中数量</th>
+				<th width="60">任务执行中数量</th>
+				<th width="60">任务失败量</th>
+				<th width="60">任务流单量</th>
+				<th width="60">任务实际已用成本</th>
+				<!-- <th></th> -->
+			</tr>	
+		</thead>
+		<tbody>
+  				<tr class="text-c">
+					{if condition="$num['type']==1"}
+  					<td>今日统计</td>
+					{elseif condition="$num['type']==2" /}
+					<td>本月统计</td>
+					{elseif condition="$num['type']==3" /}
+					<td>总统计</td>
+					{elseif condition="$num['type']==4" /}
+					<td>{$num['time']}</td>
+					{/if}
+  					<td>{$num['t_num']}</td>
+  					<td>{$num['o_num']}</td>
+  					<td>{$num['ok']}</td>
+					<td>{$num['shen']}</td>
+					<td>{$num['ing']}</td>
+					<td>{$num['nok']}</td>
+					<td>{$num['liu']}</td>
+					<td>{$num['mem']}</td>
+					<!-- <td></td> -->
+  				</tr>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+
+
+	page();
+	function page(){
+		$(".disabled li:last-child").addClass("liclass");
+	}
+	
+	function func(e){
+		var type=$(e).val();
+		if(type==4){
+			$("#time").val("");
+			$("#time").show();
+		}else{
+			$("#time").val("");
+			$("#time").hide();
+		}
+		
+	}
+	
+	
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-增加*/
+function admin_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+// //在主页面添加栏目在右侧显示
+//  function father_add(e) {
+// 		//第三个参数  1是名称  2是url  3是否存cookice  1存  0不存
+// 		window.parent.window.parenttest($(e).attr('title'),$(e).attr('data-href'),1);         
+//  }
+ 
+/*管理员-删除*/
+function admin_del(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={uid:id};
+		var url='/index/admin/admin_del';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").remove();
+				layer.msg('已删除!',{icon:1,time:1000});
+			}else{
+				layer.msg(date.msg,{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+		
+	});
+}
+/*管理员-编辑*/
+function admin_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+
+//任务的编辑
+function edit(c){
+	url='/index/task/task_edit?id='+c;
+	layer_show("编辑任务",url,800,800)
+}
+/*管理员-停用*/
+function admin_stop(obj,id){
+	layer.confirm('确认要停用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 0,uid:id};
+		var url='/index/admin/admin_list';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,'+id+')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+				$(obj).remove();
+				layer.msg('已停用!',{icon: 5,time:1000});
+			}else{
+				layer.msg('修改失败!',{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+	});
+}
+
+/*管理员-启用*/
+function admin_start(obj,id){
+	layer.confirm('确认要启用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 1,uid:id};
+		var url='/index/admin/admin_list';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,'+id+')" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+				$(obj).remove();
+				layer.msg('已启用!', {icon: 6,time:1000});
+			}else{
+				layer.msg('修改失败!',{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+	});
+}
+
+
+	//搜索
+	function search(){
+		var type=$('#type').val();
+		var time=$('#time').val();
+		if(type==''){
+			window.location.href='/index/task/task_count';
+			
+		}else if(type==4 && time=='')
+		{
+			alert("请选择时间");
+		}else if(type==4 && time !='')
+		{
+			window.location.href='/index/task/task_count?type='+type+'&time='+time;
+		}else{
+			window.location.href='/index/task/task_count?type='+type;
+		}
+	}
+
+
+	function stop_task(e){
+		layer.confirm('确认任务下线吗？',function(index){
+			$('.layui-layer-shade').remove();
+			$('.layui-layer-dialog').remove();
+			var data={id:$(e).attr('data-id')};
+			var url='/index/task/stop_task';
+			var render=function(date){
+				if(date.state=='y'){
+					$(e).parent().prev().children().html('任务结束');
+					$(e).parent().prev().children().removeClass('label-warning');
+					$(e).parent().prev().children().addClass('label-success');
+					$(e).remove();
+				}else{
+					layer.msg(date.msg, {icon: 1,time:2000});
+				}
+			}
+			ajax_data(data,url,render);
+
+		});
+	}
+</script>
+{/block}

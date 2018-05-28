@@ -1,0 +1,81 @@
+{extend name="base/base"}
+{block name="body"}
+<article class="page-container">
+    <form action="" method="post" class="form form-horizontal" id="form-smallv-grade_add" enctype="multipart/form-data">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>等级名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.name}" placeholder="" id="adminName" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>等级经验额：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.experience}" placeholder="" id="experience" name="experience">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$info.sort}" placeholder="" id="sort" name="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>状态：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="status" type="radio" id="sex-1" value='1' {if condition="$info.status eq 1"}checked{/if}>
+                    <label for="sex-1">启用</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="sex-2" name="status" value='0' {if condition="$info.status eq 0"}checked{/if}>
+                    <label for="sex-2">禁用</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">图标：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+				<input class="input-text upload-url" type="text" name="sv_icon" id="uploadfile" readonly nullmsg="请添加附件！" style="width:200px" value="{$info.sv_icon}">
+				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 上传图标</a>
+				<input type="file" multiple name="file-2" class="input-file">
+				</span> </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input type="hidden" id="hidden" value="{$info.id}" name="id">
+                <btn class="btn btn-primary radius" type="submit" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript">
+    var ids="form-smallv-grade_add";
+
+    var result=function(date){
+        if(date.state=="y"){
+            //父级页面刷新
+            modal_alert(date.msg,2000);
+            $(window.parent.location.reload());
+
+        }else{
+            modal_alert(date.msg);
+        }
+    }
+
+    function test(o) {
+        var id = $('#hidden').val();
+        if(id){
+            var url = '/index/smallv/grade_edit';
+        }else{
+            var url = '/index/smallv/grade_add';
+        }
+        ajax_form(ids,url,result);
+    }
+</script>
+{/block}

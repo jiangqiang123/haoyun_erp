@@ -1,0 +1,70 @@
+{extend name="base/base"}
+{block name="body"}
+	<script type="text/javascript" src="__PUBLIC__/static/h-ui/js/ExcelUtil.js"></script>
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>未使用激活码数量：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{$num}
+		</div>
+	</div>
+	{if condition="$num != ''"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>导出激活码：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<div class=" btn btn-primary-outline radius" onclick='ExcelUtils.exportExcel("tableContent");'>点击导出</div>
+		</div>
+	</div>
+	{/if}
+
+	<table id="tableContent" style="display:none;">
+		<thead>
+			<tr>
+				<th>序号</th>
+				<th>激活码</th>
+			</tr>
+		</thead>
+		<tbody>
+			{volist name="code" id="vo"}
+			<tr>
+				<td>{$vo.id}</td>
+				<td>{$vo.code}</td>
+			</tr>
+			{/volist}
+		</tbody>
+	</table>
+
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+	var ids="form-admin-add";
+
+  	var result=function(date){
+	    if(date.state=="y"){
+		    //父级页面
+		    modal_alert(date.msg,2000);
+		    $(window.parent.location.reload());
+	    }else{
+	     	alert(date.msg);
+	    }
+  	}
+  
+  	function test(o) {
+
+		var url='/index/finance/excel_export';
+	   	ajax_form(ids,url,result);
+
+  	}
+</script> 
+
+{/block}

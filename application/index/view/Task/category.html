@@ -1,0 +1,113 @@
+{extend name="base/base"}
+{block name="body"}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 订单管理 <span class="c-gray en">&gt;</span>任务类别 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray"> <span class="l"><a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加类别','{:url("Task/category_add")}','600','400')"><i class="Hui-iconfont">&#xe600;</i> 添加类型</a> </span></div>
+	<table class="table table-border table-bordered table-hover table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="5">任务类别</th>
+			</tr>
+			<tr class="text-c">
+				<th ><input type="checkbox" value="" name=""></th>
+				<th >排序</th>
+				<th >任务类型</th>
+				<th >图标</th>
+				<th >状态</th>
+				<th >操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{volist name="list" id="vo"}
+			<tr  class="text-c">
+				<td><input type="checkbox" value="" name=""></td>
+				<td>{$vo.sort}</td>
+				<td>{$vo.name}</td>
+				
+				<td><img src="/uploads/category/{$vo.icon}" alt="类别图标"></td>
+				
+				{if condition="$vo.status eq 1"}
+				<td class="td-status"><span class="btn btn-success radius size-MINI disabled">已启用</span></td>
+				{else /}
+				<td class="td-status"><span class="btn radius size-MINI disabled">已禁用</span></td>
+				{/if}
+				<td class="td-manage">
+					<a title="编辑" href="javascript:;" onclick="admin_role_edit('修改类别','/index/task/category_edit/id/{$vo.id}','4','','510')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+					<a title="删除" href="javascript:;" onclick="admin_group_del(this,'{$vo.id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+				</td>
+			</tr>
+			{/volist}
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+/*管理员-角色-添加*/
+function admin_role_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-编辑*/
+function admin_role_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+
+/*管理员-停用*/
+function admin_stop(obj,id){
+	layer.confirm('确认要停用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 0,id:id};
+//		var url='/index/task/';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,'+id+')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+				$(obj).remove();
+				layer.msg('已停用!',{icon: 5,time:1000});
+			}else{
+				layer.msg('修改失败!',{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);
+	});
+}
+
+/*管理员-启用*/
+function admin_start(obj,id){
+	layer.confirm('确认要启用吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={status : 1,id:id};
+		//var url='/index/admin/group_list';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,'+id+')" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+				$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+				$(obj).remove();
+				layer.msg('已启用!', {icon: 6,time:1000});
+			}else{
+				layer.msg(date.msg,{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);	
+	});
+}
+/*管理员-角色-删除*/
+function admin_group_del(obj,id){
+	layer.confirm('用户组删除须谨慎，确认要删除吗？',function(index){
+		//此处请求后台程序，下方是成功后的前台处理……
+		var data={id:id};
+		var url='/index/task/category_del';
+		var render=function(date){
+			if(date.state=='y'){
+				$(obj).parents("tr").remove();
+				layer.msg('已删除!',{icon:1,time:1000});
+			}else if(date.state=='n'){
+				layer.msg('删除失败!',{icon:1,time:2000});
+			}else{
+				layer.msg(date.msg,{icon:1,time:2000});
+			}
+		}
+		ajax_data(data,url,render);	
+		
+	});
+}
+</script>
+{/block}

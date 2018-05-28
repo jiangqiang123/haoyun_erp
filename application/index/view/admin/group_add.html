@@ -1,0 +1,80 @@
+{extend name="base/base"}
+{block name="body"}
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-group-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>用户组名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="roleName" name="title" datatype="*4-16" nullmsg="用户账户不能为空">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>状态：</label>
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+				<div class="radio-box">
+					<input name="status" type="radio" id="sex-1" value='1' checked>
+					<label for="sex-1">启用</label>
+				</div>
+				<div class="radio-box">
+					<input type="radio" id="sex-2" name="status" value='0'>
+					<label for="sex-2">禁用</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">网站权限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				{volist name="node" id="vo"}				
+					<p style='{if condition="$vo.pid neq 0"}
+								text-indent:30px;
+							  {/if}
+							  {if condition="$vo.pid neq 0"}
+							  	 float:left;margin-right:-10px;
+							  {else /} clear:both;
+							  {/if}
+							   '><input type="checkbox" value="{$vo.id}" name="rules[]" data_id="{$vo.id}" pid='{$vo.pid}'  class="cb cb{$vo.pid} id{$vo.id}" onclick="node(this)" >{$vo.title}</p>
+				{/volist}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<btn type="submit" class="btn btn-success radius" id="admin-role-save" name="" onclick="test(this)"><i class="icon-ok"></i> 确定</btn>
+			</div>
+		</div>
+	</form>
+</article>
+<script type="text/javascript">
+
+	//权限选中时候的相关交互
+	function node(e){
+		var pid=$(e).attr('pid');
+		if($(e).prop('checked')){
+			if(pid == 0){
+				$('.cb'+$(e).attr('data_id')).prop("checked",true);
+			}else if(!$('.id'+$(e).attr('pid')).prop('checked')){
+				$('.id'+$(e).attr('pid')).prop('checked',true);
+			}
+		}else{
+			if(pid == 0){
+				$('.cb'+$(e).attr('data_id')).prop("checked",false);
+			}
+		}
+	}
+
+
+	var ids="form-group-add";
+  	var result=function(date){
+	   if(date.state=="y"){
+	    //父级页面
+	     $(window.parent.location.reload());
+	   }else{
+	     modal_alert(date.msg,2000);
+	   }
+   }
+  function test(o) {
+  	var url='/index/admin/group_add'
+   	ajax_form(ids,url,result);
+  }
+</script>
+{/block}

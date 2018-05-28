@@ -1,0 +1,265 @@
+{extend name="base/base"}
+{block name="body"}
+
+<style>
+	.pagination{
+		padding-top:10px
+	}
+    li{
+		float:left;
+		list-style-type:none;
+		width:10px;
+		margin:1px;
+		background: #fff;
+		display: inherit;
+		width: 35px;
+		border: 1px solid #2d8cf0;
+		border-radius: 2px;
+		text-align: center;
+		color:#000
+	}
+	.disabled{
+			color:#000
+		}
+    .active{
+        color:#fff;
+		background: #2d8cf0;
+    }
+</style>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资源管理 <span class="c-gray en">&gt;</span>媒体账号列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <form action="" method="post">
+    <div class="text-c">
+        <!-- 搜索方式: -->
+         <span class="select-box inline">
+       <select name="type" class="select" style="font-size: 12px;" onchange="func(this)">
+            <option value="" {if condition="$map.type eq ''"}selected {/if}>--搜索方式--</option>
+			<option value='1' {if condition="$map.type eq 1"}selected {/if} >姓名搜索</option>
+			<option value='2' {if condition="$map.type eq 2"}selected {/if}>账号名称搜索</option>
+			<option value='3' {if condition="$map.type eq 3"}selected {/if}>手机号搜索</option>
+           <!-- {volist name="data" id="vo"} -->
+			<!-- <option value="{$vo.id}" {if condition="$vo.id eq $map.type"}selected{/if}>{$vo.name}</option> -->
+           <!-- {/volist} -->
+        </select></span>&nbsp;&nbsp;
+		<input type="text" class="input-text" style='width:150px;{if condition="$map.val eq ''"}display:none;{/if}' placeholder="请填写" id="val" name="val" value="{$map.val?$map.val:''}">
+		
+		{if condition="$leader == 1" }
+		<select class="input-text" style="width:150px;display:none;" name="group" id="group">
+				<option value="">--请选择所属组长--</option>
+				{volist name="group" id="vo"}
+				<option value="{$vo.uid}" {if condition="$admin eq $vo.uid" }selected{/if}>{$vo.username}</option>
+				{/volist}
+		</select>
+		<select class="input-text" style="width:150px" name="team" id="team" >
+				<option value="">--请选择小组--</option>
+				{volist name="team" id="vo"}
+				<option value="{$vo.id}" {if condition="$map.team eq $vo.id" }selected{/if}>{$vo.name}</option>
+				{/volist}
+		</select>
+		{else /}
+		<select class="input-text" style="width:150px" name="group" id="group"  onchange="funcss(this)">
+				<option value="">--请选择所属组长--</option>
+				{volist name="group" id="vo"}
+				<option value="{$vo.uid}" {if condition="$map.group eq $vo.uid" }selected{/if}>{$vo.username}</option>
+				{/volist}
+		</select>
+		<select class="input-text" style="width:150px" name="team" id="team" >
+				<option value="">--请选择小组--</option>
+					{volist name="team" id="vo"}	
+					<option value="{$vo.id}" {if condition="$map.team eq $vo.id" }selected{/if}>{$vo.name}</option>
+					{/volist}
+		</select>
+		
+		{/if}
+		
+        <div class="btn btn-success radius" id="" name="" onclick="search()" ><i class="Hui-iconfont">&#xe665;</i> 搜索</div>
+    </div></form><br/>
+    <div class="cl pd-5 bg-1 bk-gray">
+		<!-- <span class="l"><a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加账号','{:url("Smallv/account_add")}','800','500')"><i class="Hui-iconfont">&#xe600;</i> 添加账号</a> </span> -->
+		<span class="r">共有媒体账号：<strong>{$number}</strong> 个</span></div>
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">媒体账号</th>
+        </tr>
+        <tr class="text-c">
+            <th ><input type="checkbox" value="" name=""></th>
+            <th >ID</th>
+            <th >手机号</th>
+			<th >姓名</th>
+			<th >所属组</th>
+            <th >媒体账号数量</th>
+            <th >操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr  class="text-c">
+            <td><input type="checkbox" value="" name=""></td>
+            <td>{$vo.uid}</td>
+            <td>{$vo.mobile}</td>
+			<td>{$vo.realname}</td>
+            <td>{$vo.bname}</td>
+            <td>{$vo.account}</td>
+            <td class="td-manage">
+				{if condition="$vo.account eq 0"}
+					--
+				{else /}
+				<a title="查看账号信息" href="javascript:;" onclick="admin_role_edit('{$vo.realname}账号信息','/index/smallv/account_xq/uid/{$vo.uid}','','800','300')" style="text-decoration:none"><i class="Hui-iconfont">&#xe695;</i></a>
+				{/if}
+                
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    {$page}
+</div>
+<script type="text/javascript">
+
+
+	 function search() {
+		
+        var val = $('#val').val();
+		var type=$('.select').val();
+		var team=$('#team').val();
+		var group=$('#group').val();
+		<!-- var account=$('#account').val(); -->
+        window.location= "/index/smallv/account_list?type="+type+"&val="+val+"&group="+group+"&team="+team;
+    }
+	
+	
+	function func(e)
+	{
+		var type=$(e).val();
+		<!-- alert(type); -->
+		if(type=='')
+		{
+			$('#val').val("");
+			$('#val').hide();
+		}else{
+			$('#val').val("");
+			$('#val').show();
+			if(type==1)
+			{
+				$('#val').attr("placeholder",'请填写姓名');
+			}else if(type==2)
+			{
+				$('#val').attr("placeholder",'请填写账号名称');
+			}else if(type==3)
+			{
+				$('#val').attr("placeholder",'请填写手机号');
+			}else{
+				$('#val').attr("placeholder",'请填写');
+			}
+		}
+	}
+	
+	function funcss(e)
+	  {
+		 var group=$(e).val();
+		 var a=$("#team");
+		 a.html("");
+		 if(group=='')
+		 {
+			a.append("<option value=''>---请选择---</option>");
+		 }else{
+			 $.ajax({
+			  url: '/index/smallv/obtain_team',
+			  type: 'post',
+			  data:{group:group},
+			  dataType: 'json',
+			  success: function (e) {
+				if(e.state=='y')
+				{
+					var str=e.msg;
+					var info="<option value=''>---请选择---</option>";
+					for(var i = 0;i < str.length; i++) {
+						info += "<option value='"+str[i].id+"'>"+str[i].name+"</option>";
+					}
+					a.append(info);
+				}else{
+					alert(e.msg+',请重新选择');
+					
+				}
+			  }
+			})
+		 }
+	  }
+	
+	
+
+    /*管理员-角色-添加*/
+    function admin_role_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*管理员-角色-编辑*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*管理员-停用*/
+    function admin_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={status : 0,id:id};
+//		var url='/index/task/';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,'+id+')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+                    $(obj).remove();
+                    layer.msg('已停用!',{icon: 5,time:1000});
+                }else{
+                    layer.msg('修改失败!',{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+        });
+    }
+
+    /*管理员-启用*/
+    function admin_start(obj,id){
+        layer.confirm('确认要启用吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={status : 1,id:id};
+            //var url='/index/admin/group_list';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,'+id+')" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                    $(obj).remove();
+                    layer.msg('已启用!', {icon: 6,time:1000});
+                }else{
+                    layer.msg(date.msg,{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+        });
+    }
+    /*管理员-角色-删除*/
+    function admin_group_del(obj,id){
+        layer.confirm('小v账号删除须谨慎，确认要删除吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={id:id};
+            var url='/index/smallv/account_del';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                }else if(date.state=='n'){
+                    layer.msg('删除失败!',{icon:1,time:2000});
+                }else{
+                    layer.msg(date.msg,{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+
+        });
+    }
+	page();
+	function page(){
+		$(".disabled li:last-child").addClass("liclass");
+	}
+</script>
+{/block}

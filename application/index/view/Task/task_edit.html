@@ -1,0 +1,215 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.name}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务单价：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.price}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务总量：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.number}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务剩余量：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.number-$list.amount}" placeholder="任务名称" id="adminName"  disabled>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务平台：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.type}" placeholder="任务名称" id="adminName" disabled>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务等级：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.nature}" placeholder="任务名称" id="adminName" disabled>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务类型：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.category}" placeholder="任务名称" id="adminName" disabled>
+		</div>
+	</div>
+	
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务在线截止时间到：</label>
+		{if condition="$list.active_time neq 0"}
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.active_time|date='Y-m-d H:i:s',###}" placeholder="任务名称" id="adminName" disabled>
+		</div>
+		{else /}
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="未设置任务下线时间" placeholder="任务名称" id="adminName" disabled>
+		</div>
+		{/if}
+	</div>
+	
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务状态：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{if condition="$list.status eq 1"}
+			<input type="text" class="input-text" value="已编辑,未发布" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 2"/}
+			<input type="text" class="input-text" value="任务中" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 3"/}
+			<input type="text" class="input-text" value="任务结束" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 4"/}
+			<input type="text" class="input-text" value="任务完结" placeholder="任务名称" id="adminName"  disabled>
+			{elseif condition="$list.status eq 5"/}
+			<input type="text" class="input-text" value="任务成功" placeholder="任务名称" id="adminName"  disabled>
+			{/if}
+		</div>
+	</div>
+
+	{if condition="$list.task_link neq ''"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务链接：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			
+			{$list.task_link}
+			
+		</div>
+	</div>
+	{/if}
+
+
+	{volist name='list.content' id='vo' key="k"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务内容第{$k}步：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			
+			{$vo}
+			
+		</div>
+	</div>
+	{/volist}
+
+	{if condition="($list.status eq '3') OR ($list.status eq '4')"}
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务量：</label>
+		<div class="formControls col-xs-8 col-sm-9"> 
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="is_add"  onchange="show(this)" >
+				<option value="">--任务数量的加减--</option>
+				<option value="1">加</option>
+				<option value="2">减</option>			
+			</select>
+			</span>
+			<span class="time" style="width:150px;display:none;" >
+				<input type="number" name="number" class="input-text num" value="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" />
+			</span>
+			<span>若选择任务量减少,减少量不得大于{$list.number-$list.amount}</span>
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务在线时间：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="time_active"  onchange="shows(this)" >
+				<option value="">--请选择时间单位--</option>
+				<option value="i"> 分钟</option>
+				<option value="h">小时</option>
+				<option value="d"> 天</option>				
+			</select>
+			</span>
+
+			<span class="times" style="width:150px;display:none;" >
+				<input type="number" name="active_time" class="input-text num" value="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" />
+			</span>
+			<span>非必填选项：设置在线时间,在线时间已到,不论任务量是否剩余,任务下线(已当前时间为基准)</span>
+		</div>
+		
+	</div>
+	<input type="hidden" name="id" value="{$list.id}">
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;任务重新发布&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	{/if}
+
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+
+	function show(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.time').hide();
+			$('.time').children().val('');
+		}else{
+			$('.time').show();
+		}
+	}
+
+
+	function shows(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.times').hide();
+			$('.times').children().val('');
+		}else{
+			$('.times').show();
+		}
+	}
+
+	$('.num').blur(function(){
+		var inpVal =$(this).val();
+		if(inpVal<=0 ){
+			$(this).val('');
+		}
+	})
+
+ 
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+    //父级页面
+     $(window.parent.location.reload());
+   }else{
+     alert(date.msg);
+   }
+
+  }
+  function test(o) {
+  	var url='/index/task/task_edit';
+   	ajax_form(ids,url,result);
+  }
+	
+
+</script> 
+
+{/block}

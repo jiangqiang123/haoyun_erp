@@ -1,0 +1,98 @@
+{extend name="base/base"}
+{block name="body"}
+	<script type="text/javascript" src="__PUBLIC__/static/h-ui/js/ExcelUtil.js"></script>
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>账单月份：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$bill.time}"   name="time" disabled>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>账单状态：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{if condition="$vo.status eq 0"}
+			<input type="text" class="input-text" value="已出账单" placeholder="任务名称" id="adminName" name="status" disabled>
+			{elseif condition="$vo.status eq 1" /}
+			<input type="text" class="input-text" value="打款中" placeholder="任务名称" id="adminName" name="status" disabled>
+			{elseif condition="$vo.status eq 2" /}
+			<input type="text" class="input-text" value="打款完成" placeholder="任务名称" id="adminName" name="status" disabled>
+			{/if}
+		</div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>导出账单：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<div class=" btn btn-primary-outline radius" onclick='ExcelUtils.exportExcel("tableContent");'>点击导出</div>
+		</div>
+	</div>
+
+	<input type="hidden" name="id" value="{$bill.id}">
+	{if condition="$vo.status eq 0"}
+	<input type="hidden" name="status" value='1'>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;打款中&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	{elseif condition="$vo.status eq 1" /}
+	<input type="hidden" name="status" value='2'>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;打款完成&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	{/if}
+
+	<table id="tableContent" style="display:none;">
+		<thead>
+			<tr>
+				<th>序号</th>
+				<th>金额</th>
+			</tr>
+		</thead>
+		<tbody>
+			{volist name="arr" id="vo"}
+			<tr>
+				<td>1</td>
+				<td>{$vo}</td>
+			</tr>
+			{/volist}
+		</tbody>
+	</table>
+
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+	var ids="form-admin-add";
+
+  	var result=function(date){
+	    if(date.state=="y"){
+		    //父级页面
+		    modal_alert(date.msg,2000);
+		    $(window.parent.location.reload());
+	    }else{
+	     	alert(date.msg);
+	    }
+  	}
+  
+  	function test(o) {
+
+		var url='/index/finance/excel_export';
+	   	ajax_form(ids,url,result);
+
+  	}
+</script> 
+
+{/block}

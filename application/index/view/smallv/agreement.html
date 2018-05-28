@@ -1,0 +1,110 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<!-- <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" /> -->
+    <!-- // <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script> -->
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="foreach">
+	<div class="row cl content1" data='1'>
+		<label class="form-label col-xs-4 col-sm-3">协议内容：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;" class="editor"  name="content" >{$list.content}</textarea>
+		</div>
+	</div>
+
+	</div>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;保存&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+    $(function(){
+        var box = document.getElementsByClassName("editor");
+        for (i=0;i<($('.editor').length);i++){
+            $('.editor').eq(i).attr('name');
+            $('.editor').eq(i).attr('id', $('.editor').eq(i).attr('name'));
+           new UE.ui.Editor({} ).render($('.editor').eq(i).attr('name') );
+
+        }
+
+        $('#date01').val('');
+        types();
+
+    });
+
+
+
+       window.onload = function() {
+       window.UEDITOR_CONFIG.initialFrameWidth = 750; //初始化编辑器宽度
+       window.UEDITOR_CONFIG.initialFrameHeight = 750;  //初始化编辑器高度
+       //自定义请求地址
+       UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+       UE.Editor.prototype.getActionUrl = function(action) {
+
+           if (action == 'uploadimage') {    //上传图片
+
+               return "/index/task/uploadss?action=uploadimage";
+
+           } else  if(action == 'config') {    //加载配置
+
+               return this._bkGetActionUrl.call(this, action);
+           }
+       }
+       //自定义请求地址结束
+       UE.getEditor('content');
+   }
+
+
+
+	var ids="form-admin-add";
+
+	var result=function(date){
+		if(date.state=="y"){
+			//父级页面
+			modal_alert(date.msg,2000);
+		<!-- window.location.href='/index/task/lists';  -->
+		}else{
+			alert(date.msg);
+			window.location.reload();
+		}
+
+	}
+  
+  function test(o) {
+  	var url='/index/smallv/agreement';
+   	ajax_form(ids,url,result);
+  }
+
+  //获取类别
+  <!-- function types(e){ -->
+  	<!-- $('.hide').children().attr('checked',false); -->
+  	<!-- var pid=$('#sel1 option:selected').attr('pid'); -->
+  	<!-- if(pid != ''){ -->
+  		<!-- var obj=$('.hide'); -->
+  		<!-- obj.each(function(){ -->
+  			<!-- var va=$(this).children().val(); -->
+  			<!-- if(pid.indexOf(va) !=-1){ -->
+  				<!-- $(this).show(); -->
+  			<!-- }else{ -->
+  				<!-- $(this).hide(); -->
+  			<!-- } -->
+  		<!-- }) -->
+  	<!-- } -->
+  <!-- } -->
+
+
+</script> 
+
+{/block}

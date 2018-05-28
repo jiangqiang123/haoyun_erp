@@ -1,0 +1,89 @@
+{extend name="base/base"}
+{block name="body"}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 小v管理 <span class="c-gray en">&gt;</span>小V被封账号列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <form action="" method="post">
+    <div class="text-c">
+        <!-- 账号类型:
+        <span class="select-box inline">
+        <select name="type" class="select" style="font-size: 11px;">
+            <option value="">全部分类</option>
+            {volist name="data" id="vo"}
+            <option value="{$vo.id}" {if condition="$vo.id eq $map.type"}selected{/if}>{$vo.name}</option>
+            {/volist}
+        </select></span>&nbsp;&nbsp;
+        分配状态:
+        <input type="radio" name="status" value="1" class="radio" {if condition="$map.status eq 1"}checked{/if}><span style="font-size: 12px;">未分配</span>&nbsp;
+        <input type="radio" name="status" value="2" class="radio" {if condition="$map.status eq 2"}checked{/if}><span style="font-size: 12px;">已分配</span>
+        &nbsp;&nbsp;&nbsp; -->
+        <input type="text" class="input-text" style="width:250px" placeholder="输入手机号" id="search" name="search" value="{$map.search?$map.search:''}">
+        <button type="submit" class="btn btn-success radius" id="" name="" ><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+    </div></form><br/>
+    <!-- <div class="cl pd-5 bg-1 bk-gray"> <span class="l"><a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加成长体系','{:url("Smallv/grow_add")}','800','500')"><i class="Hui-iconfont">&#xe600;</i> 小V被封账号列表</a> </span><span class="r">共有数据：<strong>{$count}</strong> 条</span></div> -->
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">封号列表</th>
+        </tr>
+        <tr class="text-c">
+            <!-- <th ><input type="checkbox" value="" name=""></th> -->
+            <th >ID</th>
+            <th >被封账号</th>
+            <th >姓名</th>
+            <th >封号截止时间</th>
+			<th>本月任务流单次数</th>
+			<th>本月任务失败次数</th>
+            <th >操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr  class="text-c">
+            <!-- <td><input type="checkbox" value="" name=""></td> -->
+            <td>{$vo.uid}</td>
+            <td>{$vo.mobile}</td>
+            <td>{$vo.realname}</td>  
+            <td>{$vo.seal_time|date="Y-m-d H:i:s",###}</td>
+			<td>{$vo.single}</td>
+			<td>{$vo.fail}</td>  			
+            <td class="td-manage">
+                <!-- <a title="编辑" href="javascript:;" onclick="admin_role_edit('编辑账号','/index/smallv/grow_edit/id/{$vo.id}','','800','500')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> -->
+                <a title="解封" href="javascript:;" onclick="admin_group_del(this,'{$vo.uid}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    /*管理员-角色-添加*/
+    function admin_role_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*管理员-角色-编辑*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*管理员-角色-删除*/
+    function admin_group_del(obj,id){
+        layer.confirm('小v账号解封须谨慎，确认要解封吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            var data={uid:id};
+            var url='/index/smallv/unblocking';
+            var render=function(date){
+                if(date.state=='y'){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已解封!',{icon:1,time:1000});
+                }else if(date.state=='n'){
+                    layer.msg('操作失败!',{icon:1,time:2000});
+                }else{
+                    layer.msg(date.msg,{icon:1,time:2000});
+                }
+            }
+            ajax_data(data,url,render);
+
+        });
+    }
+</script>
+{/block}

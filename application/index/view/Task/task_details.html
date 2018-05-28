@@ -1,0 +1,224 @@
+{extend name="base/base"}
+{block name="body"}
+ 	<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/h-ui/css/jedate.css" />
+    <script type="text/javascript" src="__PUBLIC__/static/h-ui/js/jquery.jedate.js"></script>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add" method="post" form="">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{$list.name}" placeholder="任务名称" id="adminName" name="name">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务单价：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{$list.price}
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务总量：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			{$list.number}<span>(剩余量:{$list.surplus})</span>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务有效时间：</label>
+		<div class="formControls col-xs-2 col-sm-2">
+			<input class="datainp wicon laydate-icon input-text"  id="date01" type="text"   placeholder="选填" value="{$vo.active_time}"  name="active_time" readonly>  
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务执行时间：</label>
+		<div class="formControls col-xs-8 col-sm-9"> 
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="time"  onchange="show(this)" >
+				<option value="">--请选择时间单位--</option>
+				<option value="i"> 分钟</option>
+				<option value="h">小时</option>
+				<option value="d"> 天</option>				
+			</select>
+			</span>
+
+			<span class="time" style="width:150px;" >
+				<input type="number" name="execute_time" class="input-text num" value="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"  onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}" />
+			</span>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务类型：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="type" size="1">
+				{volist name='type' id='vo'}
+				<option value="{$vo.id}">{$vo.name}</option>
+				{/volist}		
+			</select>
+			</span> </div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务种类：</label>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="nature" size="1">
+
+				<option value="3" >小V任务</option>
+				<option value="2">普通任务</option>
+				<option value="1">新手任务</option>				
+			</select>
+			</span> </div>
+	</div>
+
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">任务链接：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" autocomplete="off"  placeholder="请填写链接" id="password2" name="task_link" value="{$list.task_link}">
+		</div>
+	</div>
+
+
+	<div class="row cl content1" data='1'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第1步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;" class="editor"  name="editorContact1" >{$list['content'][0]}</textarea>
+		</div>
+	</div>
+
+	<!-- <div class="row cl content2" style="display:none" data='2'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第2步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;"class="editor"  name="editorContact2"></textarea>
+		</div>
+	</div>
+	<div class="row cl content3"  style="display:none" data='3'>
+		<label class="form-label col-xs-4 col-sm-3">任务内容(第3步)：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea type="text" style="width:100%;height:400px;"class="editor"  name="editorContact3"></textarea>
+		</div>
+	</div> -->
+
+	<div class="row cl" style="margin-left:50%;" onclick="change(this)" data='1'>
+		<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<div>添加内容</div>
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">备注：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<textarea name="remarks" cols="" rows="" class="textarea"  placeholder="说点什么...100个字符以内" dragonfly="true" onKeyUp="textarealength(this,100)">{$list.remarks}</textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+		</div>
+	</div>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<btn class="btn btn-primary radius" value="" onclick="test(this)">&nbsp;&nbsp;提交&nbsp;&nbsp;</btn>
+		</div>
+	</div>
+	</form>
+</article>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>>
+<!--_footer 作为公共模版分离出去--> 
+
+<!--/_footer /作为公共模版分离出去--> 
+
+<!--请在下方写此页面业务相关的脚本--> 
+<script type="text/javascript">
+	//富文本编辑器的调用
+    $(function(){
+        var box = document.getElementsByClassName("editor");
+        for (i=0;i<($('.editor').length);i++){
+            $('.editor').eq(i).attr('name');
+            $('.editor').eq(i).attr('id', $('.editor').eq(i).attr('name'));
+           new UE.ui.Editor({} ).render($('.editor').eq(i).attr('name') );
+
+        }
+
+        $('#date01').val('');
+    });
+
+	function show(e){
+		var pid=$(e).val();
+		//alert(pid);
+		if(pid == ''){
+			$('.time').hide();
+			$('.time').children().val('');
+		}else{
+			$('.time').show();
+		}
+	}
+
+	$('.num').blur(function(){
+		var inpVal =$(this).val();
+		if(inpVal<=0 ){
+			$(this).val('');
+		}
+	})
+
+    // $("#date01").jeDate({
+    //         isinitVal:true,
+    //         //festival: true,
+    //         hmsLimit:false,
+    //         skinCell:"jedatered",
+    //         hmsSetVal:{hh:{$start_time["hour"]},mm:{$start_time["min"]},ss:{$start_time["sec"]}},
+    //         ishmsVal:false,
+    //         minDate: '{$start_time['time']}',
+    //         format:"YYYY-MM-DD hh:mm:ss",
+    //         zIndex:3000,
+    //     })
+
+
+
+       window.onload = function() {
+       window.UEDITOR_CONFIG.initialFrameWidth = 750; //初始化编辑器宽度
+       window.UEDITOR_CONFIG.initialFrameHeight = 200;  //初始化编辑器高度
+       //自定义请求地址
+       UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+       UE.Editor.prototype.getActionUrl = function(action) {
+
+           if (action == 'uploadimage') {    //上传图片
+
+               return "/index/task/uploadss?action=uploadimage";
+
+           } else  if(action == 'config') {    //加载配置
+
+               return this._bkGetActionUrl.call(this, action);
+           }
+       }
+       //自定义请求地址结束
+       UE.getEditor('content');
+   }
+
+   //添加步数
+   function change(e){
+   		var leng=$(e).attr('data');
+   		if(leng== 3){
+   			alert('最多加三步');
+   		}else{
+   			var num=parseInt($(e).attr('data'))+1;
+   			$('.content'+num).show();
+   			$(e).attr('data',num);
+   		}
+   }
+
+
+  var ids="form-admin-add";
+
+  var result=function(date){
+   if(date.state=="y"){
+    //父级页面
+     $(window.parent.location.reload());
+   }else{
+     alert(date.msg);
+   }
+
+  }
+  function test(o) {
+  	var url='/index/task/release';
+   	ajax_form(ids,url,result);
+  }
+	
+
+</script> 
+
+{/block}
