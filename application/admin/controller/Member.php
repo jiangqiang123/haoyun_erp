@@ -1,13 +1,13 @@
 <?php
-namespace app\index\controller;
+namespace app\admin\controller;
 
 use think\Db;
-use app\index\controller\Pub;
-use app\index\model\MemberRealname;
-use app\index\model\ActiveCode;
-use app\index\model\AuthAdmin;
-use app\index\model\AuthGroupAccess;
-use app\index\model\GroupTeam;
+use app\admin\controller\Pub;
+use app\admin\model\MemberRealname;
+use app\admin\model\ActiveCode;
+use app\admin\model\AuthAdmin;
+use app\admin\model\AuthGroupAccess;
+use app\admin\model\GroupTeam;
 
 
 class Member extends Pub

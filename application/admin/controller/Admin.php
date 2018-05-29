@@ -1,7 +1,7 @@
 <?php
-namespace app\index\controller;
+namespace app\admin\controller;
 
-use app\index\controller\Pub;
+use app\admin\controller\Pub;
 
 /**
 **管理员控制器***

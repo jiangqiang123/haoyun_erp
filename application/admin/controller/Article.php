@@ -1,8 +1,8 @@
 <?php
-namespace app\index\controller;
-use app\index\controller\Pub;
-use app\index\model\ArticleType;
-use app\index\model\Article as Artic;
+namespace app\admin\controller;
+use app\admin\controller\Pub;
+use app\admin\model\ArticleType;
+use app\admin\model\Article as Artic;
 
 use think\Db;
 use think\Request;

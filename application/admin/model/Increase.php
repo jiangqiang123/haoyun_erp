@@ -1,8 +1,8 @@
 <?php
-namespace app\index\model;
+namespace app\admin\model;
 use think\Model;
 /***实名认证表***/
-class Bill extends Model
+class Increase extends Model
 {
     // 开启自动写入时间戳字段
     protected $autoWriteTimestamp = true;

@@ -1,9 +1,9 @@
 <?php
-namespace app\index\model;
+namespace app\admin\model;
 use think\Model;
-use app\index\model\Order;
-use app\index\model\SmallvAccount;
-use app\index\model\MemberRealname;
+use app\admin\model\Order;
+use app\admin\model\SmallvAccount;
+use app\admin\model\MemberRealname;
 //use app\index\model\MemberRealname;
 
 class Member extends Model

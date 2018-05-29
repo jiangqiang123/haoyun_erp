@@ -1,5 +1,5 @@
 <?php
-namespace app\index\controller;
+namespace app\admin\controller;
 
 use think\Controller;
 use think\Session;
@@ -32,8 +32,7 @@ class Login extends Controller
 					$node=$auth->getAuthList(Session::get('USER_AUTH_KEY'),1);
 					Session::set('_ACCESS_LIST',$node);
 				 }
-				 // dump(Session::get('ad_username'));die;
-				 
+
 				return $this->success('登录成功',url('index/index'),'',1);
 			}else{
 				return $this->error('密码错误',url('login/login'),'',2);
@@ -41,7 +40,7 @@ class Login extends Controller
 		}
 
 		if(Session::get('ad_username') != ''){
-            return $this->redirect('/index/index/index');
+            return $this->redirect('/admin/index/index');
         }
 		return $this->fetch();
 	}

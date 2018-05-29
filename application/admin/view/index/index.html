@@ -85,7 +85,7 @@
                 <ul>
                     {volist name="rules" id="v"}
                     {if condition="$vo.id == $v.pid "}
-                        <li><a _href="/{$v.module}/{$v.name}" data-title="{$v.title}" href="javascript:;">{$v.title}</a></li>
+                        <li><a _href="/admin/{$v.name}" data-title="{$v.title}" href="javascript:;">{$v.title}</a></li>
                     {/if}
                     {/volist}
                 </ul>

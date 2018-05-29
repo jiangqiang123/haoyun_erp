@@ -13,13 +13,13 @@
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-        'hostname'        => '120.78.132.173',
+        'hostname'        => '118.31.77.232',
         // 数据库名
-        'database'        => 'smallV',
+        'database'        => 'erp',
         // 用户名
         'username'        => 'root',
         // 密码
-        'password'        => 'root',
+        'password'        => '123456',
         // 端口
         'hostport'        => '3306',
         // 连接dsn

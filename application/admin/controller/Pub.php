@@ -1,5 +1,5 @@
 <?php
-namespace app\index\controller;
+namespace app\admin\controller;
 
 use think\Controller;
 use think\Session;
@@ -18,7 +18,7 @@ class Pub extends Controller
         {   
             //判断有没有登录 
             if(Session::get('ad_username') == ''){
-                return $this->redirect('/index/login/login');
+                return $this->redirect('/admin/login/login');
             }
             define('CONTROLLER_NAME',strtolower(Request::instance()->controller()));
             define('ACTION_NAME',Request::instance()->action());
@@ -26,6 +26,7 @@ class Pub extends Controller
             $node=Session::get('_ACCESS_LIST');
             // 不需要验证的模块
             $nomodel=explode(',',strtolower(config('NOT_AUTH_MODULE')));
+          //  dump($node);dump($nomodel);die;
             if(!in_array(CONTROLLER_NAME,$nomodel) && Session::get('ADMIN_AUTH_KRY')==null){
                 //还需排除不是超级管理员
                 if(!in_array(CONTROLLER_NAME.'/'.ACTION_NAME,$node)){

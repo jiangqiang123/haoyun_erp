@@ -1,7 +1,7 @@
 <?php
-namespace app\index\model;
+namespace app\admin\model;
 use think\Model;
-use app\index\model\AuthAdmin;
+use app\admin\model\AuthAdmin;
 /***管理员与用户组联表***/
 class AuthGroupAccess extends Model
 {

@@ -1,302 +1,202 @@
 <?php
-use app\index\model\Member as Mem;
-use app\index\model\Message;
-use app\index\model\SmallvAccount;
+/**
+ * @className：API模块公共方法管理
+ * @description：该模块下公用自定义方法
+ * @author:通明技术团队
+ * Date: 2017/10/30
+ * Time: 14:09
+ */
 
 
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: 流年 <liu21st@gmail.com>
-// +----------------------------------------------------------------------
+/*
+ *TOKEN 双向加密解密
+ *@param $string  存入uid
+ *@param $operation 操作(加密ENCODE,解密DECODE)
+ *@param $key   附加组合用于加密
+ *@param $expiry  token值有效时间
+ */
+function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0)
+{
+    // 动态密匙长度，相同的明文会生成不同密文就是依靠动态密匙
+    $ckey_length = 4;
 
-// 应用公共文件
+    // 密匙
+    $key = md5($key ? $key : $GLOBALS['discuz_auth_key']);
 
-
-/***
-*amin function 
-*后台公共方法
-***/
-
-
-	#加密方法
-	function xv_admin_md5($str, $key = 'SvAdmin'){
-		return '' === $str ? '' : md5(sha1($str) . $key);
-	}
-
-
-	#开启 禁用
-	function int_to_string(&$data,$map=array('status'=>array(1=>'正常',-1=>'删除',0=>'禁用',2=>'未审核'))) {
-        if($data === false || $data === null ){
-            return $data;
+    // 密匙a会参与加解密
+    $keya = md5(substr($key, 0, 16));
+    // 密匙b会用来做数据完整性验证
+    $keyb = md5(substr($key, 16, 16));
+    // 密匙c用于变化生成的密文
+    $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length):
+        substr(md5(microtime()), -$ckey_length)) : '';
+    // 参与运算的密匙
+    $cryptkey = $keya.md5($keya.$keyc);
+    $key_length = strlen($cryptkey);
+    // 明文，前10位用来保存时间戳，解密时验证数据有效性，10到26位用来保存$keyb(密匙b)，
+//解密时会通过这个密匙验证数据完整性
+    // 如果是解码的话，会从第$ckey_length位开始，因为密文前$ckey_length位保存 动态密匙，以保证解密正确
+    $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) :
+        sprintf('%010d', $expiry ? $expiry + time() : 0).substr(md5($string.$keyb), 0, 16).$string;
+    $string_length = strlen($string);
+    $result = '';
+    $box = range(0, 255);
+    $rndkey = array();
+    // 产生密匙簿
+    for($i = 0; $i <= 255; $i++) {
+        $rndkey[$i] = ord($cryptkey[$i % $key_length]);
+    }
+    // 用固定的算法，打乱密匙簿，增加随机性，好像很复杂，实际上对并不会增加密文的强度
+    for($j = $i = 0; $i < 256; $i++) {
+        $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+        $tmp = $box[$i];
+        $box[$i] = $box[$j];
+        $box[$j] = $tmp;
+    }
+    // 核心加解密部分
+    for($a = $j = $i = 0; $i < $string_length; $i++) {
+        $a = ($a + 1) % 256;
+        $j = ($j + $box[$a]) % 256;
+        $tmp = $box[$a];
+        $box[$a] = $box[$j];
+        $box[$j] = $tmp;
+        // 从密匙簿得出密匙进行异或，再转成字符
+        $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+    }
+    if($operation == 'DECODE') {
+        // 验证数据有效性，请看未加密明文的格式
+        if((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) &&
+            substr($result, 10, 16) == substr(md5(substr($result, 26).$keyb), 0, 16)) {
+            return substr($result, 26);
+        } else {
+            return '';
         }
-        $data = (array)$data;
-        foreach ($data as $key => $row){
-            foreach ($map as $col=>$pair){
-                if(isset($row[$col]) && isset($pair[$row[$col]])){
-                    $data[$key][$col.'_text'] = $pair[$row[$col]];
+    } else {
+        // 把动态密匙保存在密文里，这也是为什么同样的明文，生产不同密文后能解密的原因
+        // 因为加密后的密文可能是一些特殊字符，复制过程可能会丢失，所以用base64编码
+        return $keyc.str_replace('=', '', base64_encode($result));
+    }
+}
+
+
+/*
+ *判断数组键值全部存在,验证前端传参是否正确
+ *@param $arr  要验证的数组键名组成的数组
+ *@param $data 对象数组
+ */
+function key_is_set($arr,$data)
+{  $state=1;
+    foreach ($arr as $key=>$val){
+        if(!isset($data[$val])==true){
+            $state=0;
+        }
+    }
+    return $state==0 ? false :true;
+}
+
+/*
+ * 系统非常规加密
+ *@param $str   加密参数
+ *@param $key   加密附加值
+ */
+function user_md5($str,$key = 'DC')
+{
+    return '' === $str ? '' : md5(sha1($str) . $key);
+}
+
+/*
+ *无限分类的树状输出
+ *@param $tree 排序对象
+ *@param $rootId 父id
+ */
+function tree($tree, $rootId = 0) {
+    $return = array();
+    foreach($tree as $leaf) {
+        if($leaf['pid'] == $rootId) {
+            foreach($tree as $subleaf) {
+                if($subleaf['pid'] == $leaf['id']) {
+                    $leaf['children'] = tree($tree, $leaf['id']);
+                    break;
                 }
             }
-        }
-        return $data;
-    }
-
-
-    /*
-    *生成订单号
-    */
-    function makeOrderSn($uid) {
-        return mt_rand(10,99)
-        . sprintf('%010d',time() - 946656000)
-        . sprintf('%03d', (float) microtime() * 1000)
-        . sprintf('%03d', (int) $uid % 1000);
-    }
-
-
-    /*
-    *生成激活码
-    */
-    function GetfourStr()
-
-    {
-        $num=mt_rand(1,6);
-        $eng=array('a','b','c','d','e','f','h','i','j','k','m','n','p','r','s','t','u','v','w','x','y');
-        if($num==1){
-            return mt_rand(0,9).$eng[mt_rand(0,20)]. mt_rand(0,9).$eng[mt_rand(0,20)];
-        }elseif($num==2){
-            return $eng[mt_rand(0,20)].mt_rand(0,9).$eng[mt_rand(0,20)].mt_rand(0,9);
-        }elseif($num==3){
-            return $eng[mt_rand(0,20)].$eng[mt_rand(0,20)].mt_rand(0,9).mt_rand(0,9);
-        }elseif($num==4){
-            return mt_rand(0,9).mt_rand(0,9).$eng[mt_rand(0,20)].$eng[mt_rand(0,20)];
-        }elseif($num==5){
-            return $eng[mt_rand(0,20)].mt_rand(0,9).mt_rand(0,9).$eng[mt_rand(0,20)];
-        }elseif($num==6){
-            return mt_rand(0,9).$eng[mt_rand(0,20)].$eng[mt_rand(0,20)].mt_rand(0,9);
-        }else{
-
-        }
-
-    }
-
-
-    /*
-    *任务成功将钱所得转入会员余额中
-    *@uid  所得的会员的id号
-    *@num  所得的余额数量
-    */
-
-    function pay_for($uid,$num)
-    {
-        if(Mem::where(array('uid'=>$uid))->setInc('balance',$num)){
-            return true;
-        }else{
-            return false;
+            $return[] = $leaf;
         }
     }
+    return $return;
+}
 
 
-    /*
-    *金币或经验的增减
-    *@uid  所得的会员的id号  int
-    *@num  所得的增减的数量数量 int
-    *@is_add  默认1为加    int 
-    *@type  加减的对象   1为经验experience  2为金币gold;  int
-    */
-    function eg_change($uid,$num,$type,$is_add=1)
-    {   
-        if($type==1)
-        {
-            $field='experience';
-        }else if($type ==2){
-            $field='gold';
-        }else{
-            return false;die;
-        }
 
-        if($is_add==1){
-            //累加
-            if(Mem::where(array('uid'=>$uid))->serInt($field,$num)){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            //累减
-            $where['uid']=$uid;
-            $where[$field]=array('ELT',$num);
-            if($member=db('member')->where($where)->find())
-            {
-                $num=$member[$field];
-            }
-            if(Mem::where(array('uid'=>$uid))->setDec($field,$num)){
-                return true;
-            }else{
-                return false;
-            }
-        }
+
+/**根据获取微博账号昵称，获取oid
+ * @param $name
+ * @return string
+ */
+function name_to_get_weibo_oid($name){
+    $ch = curl_init();//初始化一个CURL会话
+    curl_setopt($ch,CURLOPT_URL,"http://open.weibo.com/widget/ajax_getuidnick.php");//设置CURL请求URL
+    $data = "nickname=".urlencode($name);//设置POST数据（用户昵称）
+    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.8.0.11)  Firefox/1.5.0.11;");//设置User-Agent
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HEADER,0);
+    $header = array ();
+    $header [] = 'Accept-Language: zh-cn';
+    $header [] = 'Pragma: no-cache';
+    $header [] = 'Referer: http://open.weibo.com/widget/followbutton.php';//经测试，请求必须有Referer，否则将返回NULL
+    curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+    curl_setopt($ch, CURLOPT_POST,1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
+    $page = curl_exec($ch);//运行抓取
+    $matches = json_decode($page,true);//将页面返回的json数据解析为数组
+    curl_close($ch);
+    if(empty($matches['data'])){//判断返回的UID是否为空
+        return "ERR_NotFound";
+    }else{
+        return $matches['data'];
     }
+}
 
-
-    /*
-    *余额日志的存储
-    *@action 操作名称 事由 string
-    *@to_uid  余额流动对象  int
-    *@type  
-    *****
-    */
-
-    // function points_log($action)
-    // {
-
-    // }
-
-
-    /**
-     *查询账号今日已完成几次养号任务
-     *@uid 要查询会员id的账号的数组 
-     *
-     *  
-     *
-     */
-
-    function select_raise($uid)
-    {
-        $nowtime=time();
-        $day=date('Y-m-d',time());
-        $daytime=strtotime($day);
-        $where['addtime']=array('between',array($daytime,$nowtime));
-        $where['to_user_id']=$uid;
-        $where['status']=5;
-        $arr=array();
-        if(db('order')->where($where)->count() == 1)
-        {
-            return true;
+/**根据微博账号 oid ，获取账号基本信息
+ * @param $id
+ * @return array|bool
+ */
+function get_weibo_data($id){
+        $urls='https://m.weibo.cn/api/container/getIndex?containerid=100505'.$id;
+        $s= file_get_contents($urls);
+        $b=json_decode($s,true);
+        if(!empty($b) && !empty($b['data']['userInfo'])){
+            $info = $b['data']['userInfo'];
+            $return = [
+                'nickname' => $info['screen_name'],
+                'headimg' => $info['profile_image_url'],
+                'account_url' => $info['profile_url'],
+                'description' => $info['description'],
+                'fans' => $info['followers_count'],
+                'sex' => $info['gender'],
+            ];
+            return $return;
         }else{
             return false;
         }
+}
 
 
-    }
-
-    //获取本周时间
-    function this_week(){
-        $zhou=(int)date('w',time());
-        $times=date('y-m-d',time());
-        $timess=strtotime($times);
-        if($zhou == 0){
-            $aa=(int)$timess-6*24*60*60;
-        }else{
-            $aa=(int)$timess-($zhou-1)*24*60*60;
+/**
+ * 对象 转 数组
+ *
+ * @param object $obj 对象
+ * @return array
+ */
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
         }
-        return $aa;
-    }
-
-
- 
-    //查询当天完成20任务数量  累计加经验和金币
-    function day_order($uid,$num)
-    {
-        $nowtime=time();
-        $day=date('Y-m-d',time());
-        $daytime=strtotime($day);
-        $where['auditing_time']=array('between',array($daytime,$nowtime));
-        $where['status']=3;
-        $where['to_user_id']=$uid;
-        $count=db('sub_order')->where($where)->count()+0;
-        if(($count < 20) && ($count+$num>= 20)){
-            Mem::where(array('uid'=>$uid))->setInc('experience',5);
-            Mem::where(array('uid'=>$uid))->setInc('gold',5);
-            return true;
-        }else{
-            return false;
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
         }
     }
 
-    //查询当月的600完成量    累计加经验和金币
-    function month_order($uid,$num)
-    {
-        $nowtime=time();
-        $weektime=this_week();
-        $where['auditing_time']=array('between',array($weektime,$nowtime));
-        $where['status']=3;
-        $where['to_user_id']=$uid;
-        $count=db('sub_order')->where($where)->count()+0;
-        if(($count < 600) && ($count+$num>= 600)){
-            Mem::where(array('uid'=>$uid))->setInc('experience',300);
-            Mem::where(array('uid'=>$uid))->setInc('gold',300);
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
-    //判断封号 uid 会员id  $num减少的信用分
-    function close($uid)
-    {
-        $member=mem::get($uid);
-        if($member->credit< 90 && $member->credit>=80){
-            //封一天
-            if($member->mem_status==0){
-                //封号中
-                $member->seal_time=$member->seal_time+60*60*24; 
-            }else{
-                $member->seal_time=time()+60*60*24;
-                $member->mem_status=0;
-            }
-            $a=$member->save();
-            if($a){
-                $add=array('to_user_id'=>$uid,'type'=>4,'status'=>0,'reason'=>'因信用分少于90,封号1天!');
-                Message::create($add,true);
-            }
-
-        }else if($member->credit< 80 && $member->credit>=70){
-            //封3天
-            if($member->mem_status==0){
-                //封号中
-                $member->seal_time=$member->seal_time+60*60*24*3; 
-            }else{
-                $member->seal_time=time()+60*60*24*3;
-                $member->mem_status=0;
-            }
-            $a=$member->save();
-            if($a){
-                $add=array('to_user_id'=>$uid,'type'=>4,'status'=>0,'reason'=>'因信用分少于80,封号3天!');
-                Message::create($add,true);
-            }
-        }else if($member->credit< 70 && $member->credit>=60){
-            //封7天
-            if($member->mem_status==0){
-                //封号中
-                $member->seal_time=$member->seal_time+60*60*24*7; 
-            }else{
-                $member->seal_time=time()+60*60*24*7;
-                $member->mem_status=0;
-            }
-            $a=$member->save();
-            if($a){
-                $add=array('to_user_id'=>$uid,'type'=>4,'status'=>0,'reason'=>'因信用分少于70,封号7天,若少于60分将永久失去小V资格!');
-                Message::create($add,true);
-            }
-        }else if($member->credit<60){
-            //失去小V资格
-            $member->mem_status=2;
-            $member->gold=0;
-            $member->experience=0;
-            $a=$member->save();
-            if($a){
-                // SmallvAccount::where(array('uid'=>$uid))->update(array('uid'=>0,'status'=>1));
-                $add=array('to_user_id'=>$uid,'type'=>4,'status'=>0,'reason'=>'因信用分少于60,您已永久失去小V资格！');
-                Message::create($add,true);
-            }
-
-        }
-    }
-
-
-
+    return $obj;
+}
