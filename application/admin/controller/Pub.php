@@ -15,7 +15,8 @@ class Pub extends Controller
         ];
 
     protected function check_auth_user()
-        {   
+        {
+            dump(Session::get());
             //判断有没有登录 
             if(Session::get('ad_username') == ''){
                 return $this->redirect('/admin/login/login');
